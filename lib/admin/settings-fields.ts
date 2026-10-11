@@ -1,0 +1,65 @@
+import type { FieldDef } from "./fields";
+
+export const SETTINGS_FIELDS: FieldDef[] = [
+  // Admissions & announcement
+  { name: "admissionsOpen", label: "Admissions are open", type: "boolean", group: "Admissions & announcement", hint: "Shows the green 'Admissions open' badge on the home page and in the menu." },
+  { name: "admissionsSession", label: "Current session", type: "text", required: true, group: "Admissions & announcement", placeholder: "2026–27" },
+  { name: "admissionsBadge", label: "Badge text", type: "text", group: "Admissions & announcement", placeholder: "Admissions open 2026–27" },
+  { name: "announcementEnabled", label: "Show announcement bar", type: "boolean", group: "Admissions & announcement", hint: "A slim bar at the very top of every page." },
+  { name: "announcementText", label: "Announcement text", type: "text", group: "Admissions & announcement", wide: true, maxLength: 160 },
+  { name: "announcementLink", label: "Announcement link", type: "url", group: "Admissions & announcement" },
+  { name: "announcementLinkLabel", label: "Link label", type: "text", group: "Admissions & announcement", placeholder: "Learn more" },
+
+  // Contact
+  { name: "phone", label: "Main phone", type: "text", group: "Contact", hint: "Shown in the header, footer and the mobile 'Call' button.", placeholder: "+91 …" },
+  { name: "altPhone", label: "Second phone", type: "text", group: "Contact" },
+  { name: "whatsappNumber", label: "WhatsApp number", type: "text", group: "Contact", hint: "With country code, e.g. 9198XXXXXXXX. Turns on the WhatsApp buttons." },
+  { name: "whatsappMessage", label: "WhatsApp greeting", type: "text", group: "Contact", hint: "Pre-filled message when someone taps WhatsApp." },
+  { name: "email", label: "Public email", type: "email", group: "Contact" },
+  { name: "admissionsEmail", label: "Admissions email", type: "email", group: "Contact", hint: "New enquiry alerts are sent here." },
+  { name: "officeHours", label: "Office hours", type: "text", group: "Contact", wide: true, placeholder: "Monday – Saturday, 10 am – 4 pm" },
+  { name: "addressLine", label: "Address", type: "text", required: true, group: "Contact" },
+  { name: "city", label: "Town / city", type: "text", required: true, group: "Contact" },
+  { name: "district", label: "District", type: "text", required: true, group: "Contact" },
+  { name: "state", label: "State", type: "text", required: true, group: "Contact" },
+  { name: "postalCode", label: "PIN code", type: "text", required: true, group: "Contact" },
+  { name: "mapLink", label: "Google Maps link", type: "url", group: "Contact" },
+  { name: "mapEmbedUrl", label: "Map embed URL", type: "url", group: "Contact", wide: true, hint: "From Google Maps → Share → Embed a map → copy the src URL." },
+
+  // Identity
+  { name: "siteName", label: "College name", type: "text", required: true, group: "Identity" },
+  { name: "shortName", label: "Short name", type: "text", required: true, group: "Identity" },
+  { name: "tagline", label: "Tagline", type: "text", required: true, group: "Identity", wide: true },
+  { name: "description", label: "Short description", type: "textarea", required: true, rows: 3, group: "Identity", wide: true, hint: "Used for search engines and sharing." },
+  { name: "established", label: "Year established", type: "number", integer: true, min: 1900, max: 2100, group: "Identity" },
+  { name: "campusAcres", label: "Campus size (acres)", type: "number", integer: true, min: 0, group: "Identity" },
+  { name: "affiliation", label: "Affiliation", type: "text", required: true, group: "Identity", wide: true },
+  { name: "recognition", label: "Recognition", type: "text", required: true, group: "Identity", wide: true },
+  { name: "managedBy", label: "Managed by", type: "text", required: true, group: "Identity" },
+
+  // Branding
+  { name: "logoId", label: "Logo", type: "image", group: "Branding", hint: "Square logo works best. Leave empty to use the built-in emblem." },
+  { name: "faviconId", label: "Favicon", type: "image", group: "Branding", hint: "Small square icon for browser tabs (PNG, 512 × 512)." },
+  { name: "defaultOgImageId", label: "Default sharing image", type: "image", group: "Branding", hint: "Shown when pages are shared on WhatsApp/Facebook (1200 × 630)." },
+  { name: "primaryColor", label: "Primary colour", type: "color", group: "Branding", hint: "Leave empty for the default forest green. Keep it dark enough for white text." },
+  { name: "accentColor", label: "Accent colour", type: "color", group: "Branding", hint: "Used for main buttons. Leave empty for the default terracotta." },
+
+  // Principal
+  { name: "principalName", label: "Principal's name", type: "text", group: "Principal's message" },
+  { name: "principalTitle", label: "Title", type: "text", group: "Principal's message" },
+  { name: "principalPhotoId", label: "Photo", type: "image", group: "Principal's message" },
+  { name: "principalMessage", label: "Message", type: "textarea", rows: 8, group: "Principal's message", wide: true, hint: "Use the Principal's own words. The home page section stays hidden until this is filled in." },
+
+  // Social & footer
+  { name: "facebookUrl", label: "Facebook", type: "url", group: "Social & footer" },
+  { name: "instagramUrl", label: "Instagram", type: "url", group: "Social & footer" },
+  { name: "youtubeUrl", label: "YouTube", type: "url", group: "Social & footer" },
+  { name: "xUrl", label: "X (Twitter)", type: "url", group: "Social & footer" },
+  { name: "linkedinUrl", label: "LinkedIn", type: "url", group: "Social & footer" },
+  { name: "footerAbout", label: "Footer text", type: "textarea", rows: 3, group: "Social & footer", wide: true },
+  { name: "footerNote", label: "Footer note", type: "text", group: "Social & footer", wide: true },
+
+  // Analytics
+  { name: "gaMeasurementId", label: "Google Analytics 4 ID", type: "text", group: "Analytics (loads only after cookie consent)", placeholder: "G-XXXXXXXXXX" },
+  { name: "metaPixelId", label: "Meta Pixel ID", type: "text", group: "Analytics (loads only after cookie consent)", placeholder: "123456789012345" },
+];
