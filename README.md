@@ -131,6 +131,25 @@ email isn't set up). They work once and expire after 72 hours.
 
 ## Deploying to Vercel + Neon
 
+### Quick deploy (no command line)
+
+1. Vercel → **Add New → Project** → import this GitHub repository.
+2. Before clicking **Deploy**, add these environment variables:
+   - `AUTH_SECRET`: a long random string (for example from <https://generate-secret.vercel.app/32>)
+   - `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`: your first Super Admin login (password: 10+ characters)
+3. Click **Deploy**. The first build fails because there's no database yet — that's expected.
+4. Project → **Storage → Create Database → Neon (Postgres)** → connect it to the project (all environments).
+   This adds `DATABASE_URL` automatically.
+5. **Deployments → ⋯ → Redeploy.** The build (`vercel.json` → `npm run vercel-build`) applies migrations, loads the
+   verified TTC data (safe to repeat; never overwrites admin edits), creates the Super Admin if it doesn't exist,
+   and builds the site.
+6. Open the `.vercel.app` link, sign in at `/admin`, then remove `SEED_ADMIN_PASSWORD` from the environment variables.
+
+The site URL defaults to the Vercel production domain; set `NEXT_PUBLIC_SITE_URL` once you connect `ttcaalo.org.in`.
+Add Cloudinary keys before uploading photos (uploads are disabled in production without them).
+
+### Manual setup
+
 1. **Database.** Create a project at [neon.tech](https://neon.tech) (region: Singapore / `ap-southeast-1` is closest
    to Arunachal). Copy the **pooled** connection string.
 2. **Import the repo** in Vercel (Framework: Next.js). Add the environment variables from `.env.example` —
