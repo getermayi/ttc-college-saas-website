@@ -52,10 +52,7 @@ export function ConsentAndAnalytics({ gaId, pixelId }: { gaId: string | null; pi
   const hasTrackers = Boolean(gaId || pixelId);
 
   useEffect(() => {
-    if (consent !== null) {
-      setVisible(false);
-      return;
-    }
+    if (consent !== null) return;
     const t = setTimeout(() => setVisible(true), 1200);
     return () => clearTimeout(t);
   }, [consent]);
@@ -66,7 +63,10 @@ export function ConsentAndAnalytics({ gaId, pixelId }: { gaId: string | null; pi
     <>
       {consent === "granted" && gaId ? (
         <>
-          <Script src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`} strategy="afterInteractive" />
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`}
+            strategy="afterInteractive"
+          />
           <Script id="ga4" strategy="afterInteractive">
             {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config',${JSON.stringify(gaId)},{anonymize_ip:true});`}
           </Script>
@@ -83,26 +83,34 @@ export function ConsentAndAnalytics({ gaId, pixelId }: { gaId: string | null; pi
           role="dialog"
           aria-labelledby="consent-title"
           aria-describedby="consent-desc"
-          className="no-print fixed inset-x-3 bottom-[5.5rem] z-50 mx-auto max-w-xl animate-fade-up rounded-2xl border border-border bg-surface p-5 shadow-[var(--shadow-float)] md:bottom-6 md:left-6 md:right-auto"
+          className="no-print animate-fade-up border-border bg-surface fixed inset-x-3 bottom-[5.5rem] z-50 mx-auto max-w-xl rounded-2xl border p-5 shadow-[var(--shadow-float)] md:right-auto md:bottom-6 md:left-6"
         >
           <div className="flex gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-accent-soft-foreground">
+            <span className="bg-accent-soft text-accent-soft-foreground grid size-10 shrink-0 place-items-center rounded-full">
               <Cookie className="size-5" aria-hidden />
             </span>
             <div>
               <h2 id="consent-title" className="font-sans text-base font-semibold">
                 Can we use analytics cookies?
               </h2>
-              <p id="consent-desc" className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              <p id="consent-desc" className="text-muted-foreground mt-1 text-sm leading-relaxed">
                 They help us see which pages and adverts are useful. We never sell your data.{" "}
-                <Link href="/privacy-policy" className="font-medium text-primary underline underline-offset-2">
+                <Link
+                  href="/privacy-policy"
+                  className="text-primary font-medium underline underline-offset-2"
+                >
                   Privacy policy
                 </Link>
               </p>
             </div>
           </div>
           <div className="mt-4 flex gap-2 sm:justify-end">
-            <Button variant="outline" size="sm" className="flex-1 sm:flex-none" onClick={() => write("denied")}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 sm:flex-none"
+              onClick={() => write("denied")}
+            >
               No, thanks
             </Button>
             <Button size="sm" className="flex-1 sm:flex-none" onClick={() => write("granted")}>

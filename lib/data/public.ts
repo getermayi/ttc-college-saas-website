@@ -169,9 +169,9 @@ export async function getPublishedPageSlugs() {
 
 // ── Programmes & admissions ─────────────────────────────────
 
-function mapProgramme<
-  T extends { eligibility: unknown; careers: unknown; fees: unknown },
->(p: T): Omit<T, "eligibility" | "careers" | "fees"> & {
+function mapProgramme<T extends { eligibility: unknown; careers: unknown; fees: unknown }>(
+  p: T,
+): Omit<T, "eligibility" | "careers" | "fees"> & {
   eligibility: EligibilityRow[];
   careers: CareerItem[];
   fees: FeeRow[];

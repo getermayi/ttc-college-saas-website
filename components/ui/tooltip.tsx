@@ -22,7 +22,9 @@ export function Tooltip({
         <T.Content
           side={side}
           sideOffset={6}
-          className={cn("z-50 rounded-lg bg-foreground px-2.5 py-1.5 text-xs font-medium text-background shadow-lg")}
+          className={cn(
+            "bg-foreground text-background z-50 rounded-lg px-2.5 py-1.5 text-xs font-medium shadow-lg",
+          )}
         >
           {content}
         </T.Content>

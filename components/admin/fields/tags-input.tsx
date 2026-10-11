@@ -5,7 +5,17 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Simple list editor: type and press Enter to add, × to remove. */
-export function TagsInput({ id, value, onChange, placeholder = "Type and press Enter" }: { id: string; value: string[]; onChange: (v: string[]) => void; placeholder?: string }) {
+export function TagsInput({
+  id,
+  value,
+  onChange,
+  placeholder = "Type and press Enter",
+}: {
+  id: string;
+  value: string[];
+  onChange: (v: string[]) => void;
+  placeholder?: string;
+}) {
   const [draft, setDraft] = useState("");
   const add = () => {
     const v = draft.trim();
@@ -14,13 +24,21 @@ export function TagsInput({ id, value, onChange, placeholder = "Type and press E
     setDraft("");
   };
   return (
-    <div className="rounded-xl border border-border-strong bg-surface p-2 focus-within:border-primary focus-within:ring-4 focus-within:ring-ring/20">
+    <div className="border-border-strong bg-surface focus-within:border-primary focus-within:ring-ring/20 rounded-xl border p-2 focus-within:ring-4">
       {value.length ? (
         <ul className="mb-2 flex flex-col gap-1.5">
           {value.map((t, i) => (
-            <li key={`${t}-${i}`} className="flex items-start gap-2 rounded-lg bg-surface-2 px-3 py-1.5 text-sm">
+            <li
+              key={`${t}-${i}`}
+              className="bg-surface-2 flex items-start gap-2 rounded-lg px-3 py-1.5 text-sm"
+            >
               <span className="flex-1">{t}</span>
-              <button type="button" className="text-muted-foreground hover:text-danger" aria-label={`Remove ${t}`} onClick={() => onChange(value.filter((_, j) => j !== i))}>
+              <button
+                type="button"
+                className="text-muted-foreground hover:text-danger"
+                aria-label={`Remove ${t}`}
+                onClick={() => onChange(value.filter((_, j) => j !== i))}
+              >
                 <X className="size-4" aria-hidden />
               </button>
             </li>
@@ -39,7 +57,9 @@ export function TagsInput({ id, value, onChange, placeholder = "Type and press E
         }}
         onBlur={add}
         placeholder={placeholder}
-        className={cn("h-9 w-full bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground")}
+        className={cn(
+          "placeholder:text-muted-foreground h-9 w-full bg-transparent px-2 text-sm outline-none",
+        )}
       />
     </div>
   );

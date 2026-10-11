@@ -21,16 +21,35 @@ export default async function AuditPage({ searchParams }: PageProps<"/admin/audi
     ...(s("q") ? { summary: { contains: s("q"), mode: "insensitive" as const } } : {}),
   };
   const [rows, total, types, users] = await Promise.all([
-    prisma.auditLog.findMany({ where, orderBy: { createdAt: "desc" }, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE, include: { user: { select: { name: true } } } }),
+    prisma.auditLog.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      include: { user: { select: { name: true } } },
+    }),
     prisma.auditLog.count({ where }),
-    prisma.auditLog.findMany({ distinct: ["entityType"], select: { entityType: true }, orderBy: { entityType: "asc" } }),
+    prisma.auditLog.findMany({
+      distinct: ["entityType"],
+      select: { entityType: true },
+      orderBy: { entityType: "asc" },
+    }),
     prisma.user.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
   ]);
   return (
     <>
-      <AdminPageHeader title="Audit log" description="Who changed what, and when. Every save, publish, delete, upload and lead update is recorded." />
+      <AdminPageHeader
+        title="Audit log"
+        description="Who changed what, and when. Every save, publish, delete, upload and lead update is recorded."
+      />
       <form className="mb-4 flex flex-col gap-2 sm:flex-row" role="search">
-        <Input name="q" defaultValue={s("q")} placeholder="Search activity" aria-label="Search activity" className="h-10 sm:max-w-xs" />
+        <Input
+          name="q"
+          defaultValue={s("q")}
+          placeholder="Search activity"
+          aria-label="Search activity"
+          className="h-10 sm:max-w-xs"
+        />
         <NativeSelect name="type" defaultValue={s("type") ?? ""} aria-label="Type" className="h-10 sm:w-48">
           <option value="">All types</option>
           {types.map((t) => (
@@ -49,8 +68,23 @@ export default async function AuditPage({ searchParams }: PageProps<"/admin/audi
           Filter
         </Button>
       </form>
-      <AuditTable rows={rows.map((r) => ({ id: r.id, createdAt: r.createdAt.toISOString(), user: r.user?.name ?? null, action: r.action, entityType: r.entityType, summary: r.summary }))} />
-      <Pagination page={page} pageSize={PAGE_SIZE} total={total} basePath="/admin/audit" params={{ q: s("q"), type: s("type"), user: s("user") }} />
+      <AuditTable
+        rows={rows.map((r) => ({
+          id: r.id,
+          createdAt: r.createdAt.toISOString(),
+          user: r.user?.name ?? null,
+          action: r.action,
+          entityType: r.entityType,
+          summary: r.summary,
+        }))}
+      />
+      <Pagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={total}
+        basePath="/admin/audit"
+        params={{ q: s("q"), type: s("type"), user: s("user") }}
+      />
     </>
   );
 }

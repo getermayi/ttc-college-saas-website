@@ -11,20 +11,48 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input, NativeSelect } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/alert-dialog";
 
-type U = { id: string; name: string; email: string; role: RoleValue; active: boolean; lastLoginAt: string | null; hasPassword: boolean };
+type U = {
+  id: string;
+  name: string;
+  email: string;
+  role: RoleValue;
+  active: boolean;
+  lastLoginAt: string | null;
+  hasPassword: boolean;
+};
 type I = { id: string; email: string; role: RoleValue; expiresAt: string; purpose: string };
 
-export function UsersManager({ users, invites, me, myRole }: { users: U[]; invites: I[]; me: string; myRole: RoleValue }) {
+export function UsersManager({
+  users,
+  invites,
+  me,
+  myRole,
+}: {
+  users: U[];
+  invites: I[];
+  me: string;
+  myRole: RoleValue;
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [open, setOpen] = useState(false);
   const [link, setLink] = useState<string | null>(null);
   const roles = ROLES.filter((r) => r !== "SUPER_ADMIN" || myRole === "SUPER_ADMIN");
 
-  const run = (fn: () => Promise<{ ok: boolean; message?: string; data?: { link: string } }>, showLink = false) =>
+  const run = (
+    fn: () => Promise<{ ok: boolean; message?: string; data?: { link: string } }>,
+    showLink = false,
+  ) =>
     start(async () => {
       const res = await fn();
       if (!res.ok) return void toast.error(res.message);
@@ -41,23 +69,36 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
+      <div className="border-border bg-surface overflow-x-auto rounded-2xl border">
         <table className="w-full min-w-[44rem] text-left text-sm">
-          <thead className="border-b border-border bg-surface-2/60 text-xs uppercase tracking-wider text-muted-foreground">
+          <thead className="border-border bg-surface-2/60 text-muted-foreground border-b text-xs tracking-wider uppercase">
             <tr>
-              <th scope="col" className="px-4 py-3">User</th>
-              <th scope="col" className="px-4 py-3">Role</th>
-              <th scope="col" className="px-4 py-3">Status</th>
-              <th scope="col" className="px-4 py-3">Last sign-in</th>
-              <th scope="col" className="px-4 py-3"><span className="sr-only">Actions</span></th>
+              <th scope="col" className="px-4 py-3">
+                User
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Role
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Status
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Last sign-in
+              </th>
+              <th scope="col" className="px-4 py-3">
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className="border-b border-border last:border-0">
+              <tr key={u.id} className="border-border border-b last:border-0">
                 <td className="px-4 py-3">
                   <span className="block font-semibold">
-                    {u.name} {u.id === me ? <span className="text-xs font-normal text-muted-foreground">(you)</span> : null}
+                    {u.name}{" "}
+                    {u.id === me ? (
+                      <span className="text-muted-foreground text-xs font-normal">(you)</span>
+                    ) : null}
                   </span>
                   <span className="text-muted-foreground">{u.email}</span>
                 </td>
@@ -65,7 +106,13 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
                   {u.id === me || (u.role === "SUPER_ADMIN" && myRole !== "SUPER_ADMIN") ? (
                     <Badge tone="primary">{ROLE_LABELS[u.role]}</Badge>
                   ) : (
-                    <NativeSelect aria-label={`Role for ${u.name}`} className="h-9 w-48 text-sm" value={u.role} disabled={pending} onChange={(e) => run(() => updateUser(u.id, { role: e.target.value }))}>
+                    <NativeSelect
+                      aria-label={`Role for ${u.name}`}
+                      className="h-9 w-48 text-sm"
+                      value={u.role}
+                      disabled={pending}
+                      onChange={(e) => run(() => updateUser(u.id, { role: e.target.value }))}
+                    >
                       {roles.map((r) => (
                         <option key={r} value={r}>
                           {ROLE_LABELS[r]}
@@ -74,25 +121,45 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
                     </NativeSelect>
                   )}
                 </td>
-                <td className="px-4 py-3">{u.active ? <Badge tone="success">Active</Badge> : <Badge tone="danger">Deactivated</Badge>}</td>
-                <td className="px-4 py-3 text-muted-foreground" title={u.lastLoginAt ? formatDateTime(u.lastLoginAt) : undefined}>
+                <td className="px-4 py-3">
+                  {u.active ? <Badge tone="success">Active</Badge> : <Badge tone="danger">Deactivated</Badge>}
+                </td>
+                <td
+                  className="text-muted-foreground px-4 py-3"
+                  title={u.lastLoginAt ? formatDateTime(u.lastLoginAt) : undefined}
+                >
                   {u.lastLoginAt ? timeAgo(u.lastLoginAt) : "Never"}
                 </td>
                 <td className="px-4 py-3">
                   {u.id !== me && !(u.role === "SUPER_ADMIN" && myRole !== "SUPER_ADMIN") ? (
                     <div className="flex justify-end gap-1">
-                      <Button size="sm" variant="ghost" disabled={pending} onClick={() => run(() => sendPasswordReset(u.id), true)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={pending}
+                        onClick={() => run(() => sendPasswordReset(u.id), true)}
+                      >
                         <KeyRound aria-hidden /> Reset link
                       </Button>
                       <ConfirmDialog
                         title={u.active ? `Deactivate ${u.name}?` : `Reactivate ${u.name}?`}
-                        description={u.active ? "They will be signed out and can't sign in until reactivated. Their past work stays in the audit log." : "They will be able to sign in again."}
+                        description={
+                          u.active
+                            ? "They will be signed out and can't sign in until reactivated. Their past work stays in the audit log."
+                            : "They will be able to sign in again."
+                        }
                         confirmLabel={u.active ? "Deactivate" : "Reactivate"}
                         destructive={u.active}
                         onConfirm={() => run(() => updateUser(u.id, { active: !u.active }))}
                         trigger={
-                          <Button size="sm" variant="ghost" className={u.active ? "text-danger" : ""} disabled={pending}>
-                            {u.active ? <UserX aria-hidden /> : <UserCheck aria-hidden />} {u.active ? "Deactivate" : "Reactivate"}
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className={u.active ? "text-danger" : ""}
+                            disabled={pending}
+                          >
+                            {u.active ? <UserX aria-hidden /> : <UserCheck aria-hidden />}{" "}
+                            {u.active ? "Deactivate" : "Reactivate"}
                           </Button>
                         }
                       />
@@ -108,14 +175,20 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
       {invites.length ? (
         <section>
           <h2 className="text-lg font-semibold">Pending invitations</h2>
-          <ul className="mt-3 divide-y divide-border rounded-2xl border border-border bg-surface">
+          <ul className="divide-border border-border bg-surface mt-3 divide-y rounded-2xl border">
             {invites.map((i) => (
               <li key={i.id} className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm">
                 <span className="font-medium">{i.email}</span>
                 <Badge>{ROLE_LABELS[i.role]}</Badge>
                 {i.purpose === "reset" ? <Badge tone="info">Password reset</Badge> : null}
                 <span className="text-muted-foreground">expires {formatDateTime(i.expiresAt)}</span>
-                <Button size="sm" variant="ghost" className="ml-auto" onClick={() => run(() => revokeInvite(i.id))} disabled={pending}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="ml-auto"
+                  onClick={() => run(() => revokeInvite(i.id))}
+                  disabled={pending}
+                >
                   <X aria-hidden /> Revoke
                 </Button>
               </li>
@@ -124,13 +197,13 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
         </section>
       ) : null}
 
-      <section className="rounded-2xl border border-border bg-surface-2/50 p-5">
+      <section className="border-border bg-surface-2/50 rounded-2xl border p-5">
         <h2 className="font-semibold">What each role can do</h2>
         <dl className="mt-3 grid gap-3 sm:grid-cols-2">
           {ROLES.map((r) => (
             <div key={r}>
               <dt className="text-sm font-semibold">{ROLE_LABELS[r]}</dt>
-              <dd className="text-sm text-muted-foreground">{ROLE_DESCRIPTIONS[r]}</dd>
+              <dd className="text-muted-foreground text-sm">{ROLE_DESCRIPTIONS[r]}</dd>
             </div>
           ))}
         </dl>
@@ -143,7 +216,11 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
               e.preventDefault();
               const fd = new FormData(e.currentTarget);
               start(async () => {
-                const res = await inviteUser({ email: String(fd.get("email")), name: String(fd.get("name")), role: String(fd.get("role")) });
+                const res = await inviteUser({
+                  email: String(fd.get("email")),
+                  name: String(fd.get("name")),
+                  role: String(fd.get("role")),
+                });
                 if (!res.ok) return void toast.error(res.message);
                 toast.success(res.message);
                 setOpen(false);
@@ -154,7 +231,9 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
           >
             <DialogHeader>
               <DialogTitle>Invite a user</DialogTitle>
-              <DialogDescription>They&apos;ll get an email with a link to set their password. The link expires in 72 hours.</DialogDescription>
+              <DialogDescription>
+                They&apos;ll get an email with a link to set their password. The link expires in 72 hours.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <Field id="inv-name" label="Name" required>
@@ -178,7 +257,8 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
                 Cancel
               </Button>
               <Button type="submit" disabled={pending}>
-                {pending ? <Loader2 className="animate-spin" aria-hidden /> : <MailPlus aria-hidden />} Send invitation
+                {pending ? <Loader2 className="animate-spin" aria-hidden /> : <MailPlus aria-hidden />} Send
+                invitation
               </Button>
             </DialogFooter>
           </form>
@@ -189,10 +269,19 @@ export function UsersManager({ users, invites, me, myRole }: { users: U[]; invit
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Link ready</DialogTitle>
-            <DialogDescription>We emailed this link. If email isn&apos;t set up yet, copy it and send it on WhatsApp. It works once and expires in 72 hours.</DialogDescription>
+            <DialogDescription>
+              We emailed this link. If email isn&apos;t set up yet, copy it and send it on WhatsApp. It works
+              once and expires in 72 hours.
+            </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2">
-            <Input readOnly value={link ?? ""} aria-label="Invitation link" className="h-10 font-mono text-xs" onFocus={(e) => e.currentTarget.select()} />
+            <Input
+              readOnly
+              value={link ?? ""}
+              aria-label="Invitation link"
+              className="h-10 font-mono text-xs"
+              onFocus={(e) => e.currentTarget.select()}
+            />
             <Button
               type="button"
               onClick={() => {

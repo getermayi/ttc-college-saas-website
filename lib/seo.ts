@@ -17,7 +17,14 @@ type BuildArgs = {
  * Builds page metadata. Admin SEO overrides (SeoEntry for fixed routes, or the
  * fields passed in for dynamic content) win over defaults.
  */
-export async function buildMetadata({ path, title, description, ogImage, noindex, type = "website" }: BuildArgs): Promise<Metadata> {
+export async function buildMetadata({
+  path,
+  title,
+  description,
+  ogImage,
+  noindex,
+  type = "website",
+}: BuildArgs): Promise<Metadata> {
   const [settings, entry] = await Promise.all([getSettings(), getSeoEntry(path)]);
   const finalTitle = entry?.title || title || settings.siteName;
   const finalDescription = entry?.description || description || settings.description;
@@ -38,7 +45,11 @@ export async function buildMetadata({ path, title, description, ogImage, noindex
       description: finalDescription,
       locale: "en_IN",
       ...(image
-        ? { images: [{ url: image.url, width: image.width ?? 1200, height: image.height ?? 630, alt: image.alt }] }
+        ? {
+            images: [
+              { url: image.url, width: image.width ?? 1200, height: image.height ?? 630, alt: image.alt },
+            ],
+          }
         : {}),
     },
     twitter: {

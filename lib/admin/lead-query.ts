@@ -2,7 +2,13 @@ import "server-only";
 import type { Prisma } from "@/lib/generated/prisma/client";
 import { LEAD_STAGES, type LeadStageValue } from "@/lib/constants";
 
-export const ACTIVE_STAGES: LeadStageValue[] = ["NEW", "CONTACTED", "ELIGIBLE", "APPLICATION_STARTED", "APPLICATION_SUBMITTED"];
+export const ACTIVE_STAGES: LeadStageValue[] = [
+  "NEW",
+  "CONTACTED",
+  "ELIGIBLE",
+  "APPLICATION_STARTED",
+  "APPLICATION_SUBMITTED",
+];
 export const STALE_HOURS = 48;
 
 export type LeadFilters = {
@@ -38,7 +44,8 @@ export function buildLeadWhere(f: LeadFilters, currentUserId?: string): Prisma.L
       ],
     });
   }
-  if (f.stage && (LEAD_STAGES as readonly string[]).includes(f.stage)) and.push({ stage: f.stage as LeadStageValue });
+  if (f.stage && (LEAD_STAGES as readonly string[]).includes(f.stage))
+    and.push({ stage: f.stage as LeadStageValue });
   if (f.stage === "OPEN") and.push({ stage: { in: ACTIVE_STAGES } });
   if (f.programme) and.push({ programmeId: f.programme });
   if (f.source) and.push({ source: f.source });
@@ -54,5 +61,20 @@ export function buildLeadWhere(f: LeadFilters, currentUserId?: string): Prisma.L
 
 export function readFilters(sp: Record<string, string | string[] | undefined>): LeadFilters {
   const s = (k: string) => (typeof sp[k] === "string" && sp[k] ? (sp[k] as string).slice(0, 120) : undefined);
-  return { q: s("q"), stage: s("stage"), programme: s("programme"), source: s("source"), campaign: s("campaign"), assigned: s("assigned"), stale: s("stale"), from: s("from"), to: s("to") };
+  return {
+    q: s("q"),
+    stage: s("stage"),
+    programme: s("programme"),
+    source: s("source"),
+    campaign: s("campaign"),
+    assigned: s("assigned"),
+    stale: s("stale"),
+    from: s("from"),
+    to: s("to"),
+  };
+}
+
+/** Request time, read once per render (server components only). */
+export function requestNow() {
+  return Date.now();
 }

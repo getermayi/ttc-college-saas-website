@@ -17,7 +17,10 @@ export const enquirySchema = z.object({
     .string()
     .trim()
     .min(1, "Please enter your mobile number.")
-    .refine((v) => normaliseIndianPhone(v) !== null, "Enter a valid 10-digit Indian mobile number, e.g. 98765 43210."),
+    .refine(
+      (v) => normaliseIndianPhone(v) !== null,
+      "Enter a valid 10-digit Indian mobile number, e.g. 98765 43210.",
+    ),
   email: z
     .union([z.literal(""), z.email("Please enter a valid email, or leave it empty.").max(150)])
     .optional()
@@ -79,9 +82,18 @@ export const grievanceSchema = z
     website: z.string().max(0).optional(),
   })
   .superRefine((v, ctx) => {
-    if (!v.anonymous && !v.name) ctx.addIssue({ code: "custom", path: ["name"], message: "Please enter your name, or choose to stay anonymous." });
+    if (!v.anonymous && !v.name)
+      ctx.addIssue({
+        code: "custom",
+        path: ["name"],
+        message: "Please enter your name, or choose to stay anonymous.",
+      });
     if (!v.anonymous && !v.phone && !v.email)
-      ctx.addIssue({ code: "custom", path: ["phone"], message: "Give us a phone number or email so we can update you." });
+      ctx.addIssue({
+        code: "custom",
+        path: ["phone"],
+        message: "Give us a phone number or email so we can update you.",
+      });
   });
 
 export type GrievanceInput = z.input<typeof grievanceSchema>;

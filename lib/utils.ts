@@ -123,3 +123,11 @@ export function isRecent(date: Date | string, days = 7, now: Date = new Date()) 
 export function pluralise(count: number, singular: string, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`;
 }
+
+/**
+ * Cache Components requires generateStaticParams to return at least one entry.
+ * When there is no content yet, prerender a placeholder that resolves to the 404 page.
+ */
+export function atLeastOne<T extends Record<string, string>>(params: T[], key: keyof T): T[] {
+  return params.length ? params : [{ [key]: "__none" } as T];
+}

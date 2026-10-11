@@ -9,13 +9,24 @@ import { revalidateContent } from "./revalidate";
 import { ALL_TAGS } from "@/lib/cache-tags";
 import type { MediaLite } from "@/lib/content-types";
 
-export async function listMedia(opts: { kind?: "IMAGE" | "DOCUMENT"; q?: string; cursor?: string }): Promise<{ items: MediaLite[]; next: string | null }> {
+export async function listMedia(opts: {
+  kind?: "IMAGE" | "DOCUMENT";
+  q?: string;
+  cursor?: string;
+}): Promise<{ items: MediaLite[]; next: string | null }> {
   await assertCapability("media").catch(async () => assertCapability("content"));
   const take = 40;
   const items = await prisma.media.findMany({
     where: {
       ...(opts.kind ? { kind: opts.kind } : {}),
-      ...(opts.q ? { OR: [{ filename: { contains: opts.q, mode: "insensitive" } }, { alt: { contains: opts.q, mode: "insensitive" } }] } : {}),
+      ...(opts.q
+        ? {
+            OR: [
+              { filename: { contains: opts.q, mode: "insensitive" } },
+              { alt: { contains: opts.q, mode: "insensitive" } },
+            ],
+          }
+        : {}),
     },
     orderBy: { createdAt: "desc" },
     take: take + 1,
@@ -37,8 +48,12 @@ export async function updateMedia(id: string, data: { alt: string; caption?: str
     const alt = data.alt.trim().slice(0, 250);
     const media = await prisma.media.findUnique({ where: { id } });
     if (!media) return { ok: false as const, message: "File not found." };
-    if (media.kind === "IMAGE" && alt.length < 3) return { ok: false as const, message: "Alt text is required for images." };
-    await prisma.media.update({ where: { id }, data: { alt, caption: data.caption?.trim().slice(0, 300) || null } });
+    if (media.kind === "IMAGE" && alt.length < 3)
+      return { ok: false as const, message: "Alt text is required for images." };
+    await prisma.media.update({
+      where: { id },
+      data: { alt, caption: data.caption?.trim().slice(0, 300) || null },
+    });
     await audit(user, "update", "media", id, `Updated details for "${media.filename}"`);
     revalidateContent(["media"]);
     return { ok: true as const, message: "Saved." };
@@ -54,7 +69,11 @@ export async function mediaUsage(id: string) {
   await assertCapability("media");
   const [direct, json] = await Promise.all([
     Promise.all([
-      prisma.siteSettings.count({ where: { OR: [{ logoId: id }, { faviconId: id }, { defaultOgImageId: id }, { principalPhotoId: id }] } }),
+      prisma.siteSettings.count({
+        where: {
+          OR: [{ logoId: id }, { faviconId: id }, { defaultOgImageId: id }, { principalPhotoId: id }],
+        },
+      }),
       prisma.section.count({ where: { imageId: id } }),
       prisma.page.count({ where: { OR: [{ heroImageId: id }, { ogImageId: id }] } }),
       prisma.programme.count({ where: { OR: [{ heroImageId: id }, { ogImageId: id }] } }),
@@ -83,7 +102,8 @@ export async function deleteMedia(id: string) {
     const media = await prisma.media.findUnique({ where: { id } });
     if (!media) return { ok: false as const, message: "File not found." };
     const used = await mediaUsage(id);
-    if (used > 0) return { ok: false as const, message: `This file is used in ${used} place(s). Remove it there first.` };
+    if (used > 0)
+      return { ok: false as const, message: `This file is used in ${used} place(s). Remove it there first.` };
     await prisma.media.delete({ where: { id } });
     await removeStoredFile(media.publicId, media.kind);
     await audit(user, "delete", "media", id, `Deleted file "${media.filename}"`);

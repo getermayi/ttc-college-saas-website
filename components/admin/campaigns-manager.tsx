@@ -10,7 +10,14 @@ import { formatRupees } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/alert-dialog";
 
 export type CampaignRow = {
@@ -31,8 +38,27 @@ export function CampaignsManager({ rows }: { rows: CampaignRow[] }) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<CampaignRow | null>(null);
-  const blank: CampaignRow = { id: null, name: "", utmCampaign: "", channel: "Meta Ads", spend: null, startDate: "", endDate: "", notes: "", leads: 0, contacted: 0, enrolled: 0 };
-  const totals = rows.reduce((a, r) => ({ spend: a.spend + (r.spend ?? 0), leads: a.leads + r.leads, enrolled: a.enrolled + r.enrolled }), { spend: 0, leads: 0, enrolled: 0 });
+  const blank: CampaignRow = {
+    id: null,
+    name: "",
+    utmCampaign: "",
+    channel: "Meta Ads",
+    spend: null,
+    startDate: "",
+    endDate: "",
+    notes: "",
+    leads: 0,
+    contacted: 0,
+    enrolled: 0,
+  };
+  const totals = rows.reduce(
+    (a, r) => ({
+      spend: a.spend + (r.spend ?? 0),
+      leads: a.leads + r.leads,
+      enrolled: a.enrolled + r.enrolled,
+    }),
+    { spend: 0, leads: 0, enrolled: 0 },
+  );
 
   return (
     <>
@@ -41,43 +67,75 @@ export function CampaignsManager({ rows }: { rows: CampaignRow[] }) {
           <Plus aria-hidden /> Add campaign
         </Button>
       </div>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
+      <div className="border-border bg-surface overflow-x-auto rounded-2xl border">
         <table className="w-full min-w-[56rem] text-left text-sm">
-          <thead className="border-b border-border bg-surface-2/60 text-xs uppercase tracking-wider text-muted-foreground">
+          <thead className="border-border bg-surface-2/60 text-muted-foreground border-b text-xs tracking-wider uppercase">
             <tr>
-              <th scope="col" className="px-4 py-3">Campaign</th>
-              <th scope="col" className="px-4 py-3 text-right">Spend</th>
-              <th scope="col" className="px-4 py-3 text-right">Leads</th>
-              <th scope="col" className="px-4 py-3 text-right">Cost / lead</th>
-              <th scope="col" className="px-4 py-3 text-right">Contacted</th>
-              <th scope="col" className="px-4 py-3 text-right">Enrolled</th>
-              <th scope="col" className="px-4 py-3 text-right">Cost / enrolment</th>
-              <th scope="col" className="px-4 py-3"><span className="sr-only">Actions</span></th>
+              <th scope="col" className="px-4 py-3">
+                Campaign
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Spend
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Leads
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Cost / lead
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Contacted
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Enrolled
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Cost / enrolment
+              </th>
+              <th scope="col" className="px-4 py-3">
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
           </thead>
           <tbody className="tabular-nums">
             {rows.map((r) => (
-              <tr key={r.utmCampaign} className="border-b border-border last:border-0">
+              <tr key={r.utmCampaign} className="border-border border-b last:border-0">
                 <td className="px-4 py-3">
                   <span className="block font-semibold">{r.name || r.utmCampaign}</span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     {r.channel} · utm_campaign=<code>{r.utmCampaign}</code>
                   </span>
-                  {!r.id ? <span className="mt-1 block text-xs font-semibold text-warning">Found in leads — add spend to track cost</span> : null}
+                  {!r.id ? (
+                    <span className="text-warning mt-1 block text-xs font-semibold">
+                      Found in leads — add spend to track cost
+                    </span>
+                  ) : null}
                 </td>
                 <td className="px-4 py-3 text-right">{r.spend !== null ? formatRupees(r.spend) : "—"}</td>
                 <td className="px-4 py-3 text-right">
-                  <Link href={`/admin/leads?campaign=${encodeURIComponent(r.utmCampaign)}`} className="font-semibold text-primary hover:underline">
+                  <Link
+                    href={`/admin/leads?campaign=${encodeURIComponent(r.utmCampaign)}`}
+                    className="text-primary font-semibold hover:underline"
+                  >
                     {r.leads}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-right font-semibold">{r.spend !== null && r.leads ? formatRupees(r.spend / r.leads) : "—"}</td>
+                <td className="px-4 py-3 text-right font-semibold">
+                  {r.spend !== null && r.leads ? formatRupees(r.spend / r.leads) : "—"}
+                </td>
                 <td className="px-4 py-3 text-right">{r.contacted}</td>
                 <td className="px-4 py-3 text-right">{r.enrolled}</td>
-                <td className="px-4 py-3 text-right">{r.spend !== null && r.enrolled ? formatRupees(r.spend / r.enrolled) : "—"}</td>
+                <td className="px-4 py-3 text-right">
+                  {r.spend !== null && r.enrolled ? formatRupees(r.spend / r.enrolled) : "—"}
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
-                    <Button size="icon-sm" variant="ghost" aria-label={`Edit ${r.name || r.utmCampaign}`} onClick={() => setEditing(r)}>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={`Edit ${r.name || r.utmCampaign}`}
+                      onClick={() => setEditing(r)}
+                    >
                       <Pencil aria-hidden />
                     </Button>
                     {r.id ? (
@@ -93,7 +151,13 @@ export function CampaignsManager({ rows }: { rows: CampaignRow[] }) {
                           })
                         }
                         trigger={
-                          <Button size="icon-sm" variant="ghost" className="text-danger" aria-label="Delete campaign" disabled={pending}>
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            className="text-danger"
+                            aria-label="Delete campaign"
+                            disabled={pending}
+                          >
                             <Trash2 aria-hidden />
                           </Button>
                         }
@@ -105,26 +169,36 @@ export function CampaignsManager({ rows }: { rows: CampaignRow[] }) {
             ))}
           </tbody>
           {rows.length ? (
-            <tfoot className="border-t border-border bg-surface-2/40 font-semibold tabular-nums">
+            <tfoot className="border-border bg-surface-2/40 border-t font-semibold tabular-nums">
               <tr>
                 <td className="px-4 py-3">Total</td>
                 <td className="px-4 py-3 text-right">{formatRupees(totals.spend)}</td>
                 <td className="px-4 py-3 text-right">{totals.leads}</td>
-                <td className="px-4 py-3 text-right">{totals.leads && totals.spend ? formatRupees(totals.spend / totals.leads) : "—"}</td>
+                <td className="px-4 py-3 text-right">
+                  {totals.leads && totals.spend ? formatRupees(totals.spend / totals.leads) : "—"}
+                </td>
                 <td />
                 <td className="px-4 py-3 text-right">{totals.enrolled}</td>
-                <td className="px-4 py-3 text-right">{totals.enrolled && totals.spend ? formatRupees(totals.spend / totals.enrolled) : "—"}</td>
+                <td className="px-4 py-3 text-right">
+                  {totals.enrolled && totals.spend ? formatRupees(totals.spend / totals.enrolled) : "—"}
+                </td>
                 <td />
               </tr>
             </tfoot>
           ) : null}
         </table>
-        {!rows.length ? <p className="px-6 py-14 text-center text-muted-foreground">No campaigns yet. Tag your ad links with utm_campaign and add the spend here.</p> : null}
+        {!rows.length ? (
+          <p className="text-muted-foreground px-6 py-14 text-center">
+            No campaigns yet. Tag your ad links with utm_campaign and add the spend here.
+          </p>
+        ) : null}
       </div>
-      <section className="mt-6 rounded-2xl border border-border bg-surface-2/50 p-5 text-sm">
+      <section className="border-border bg-surface-2/50 mt-6 rounded-2xl border p-5 text-sm">
         <h2 className="font-semibold">How to tag your Meta Ads links</h2>
-        <p className="mt-1 text-muted-foreground">Use this as the website URL in your ad. Leads are matched to campaigns by the utm_campaign value.</p>
-        <code className="mt-3 block overflow-x-auto rounded-xl bg-surface p-3 text-xs">
+        <p className="text-muted-foreground mt-1">
+          Use this as the website URL in your ad. Leads are matched to campaigns by the utm_campaign value.
+        </p>
+        <code className="bg-surface mt-3 block overflow-x-auto rounded-xl p-3 text-xs">
           https://ttcaalo.org.in/enquire?utm_source=facebook&amp;utm_medium=paid_social&amp;utm_campaign=bed-admissions-2026
         </code>
       </section>
@@ -155,20 +229,40 @@ export function CampaignsManager({ rows }: { rows: CampaignRow[] }) {
             >
               <DialogHeader>
                 <DialogTitle>{editing.id ? "Edit campaign" : "Add campaign"}</DialogTitle>
-                <DialogDescription>Enter the total amount spent so far. Cost per lead updates automatically.</DialogDescription>
+                <DialogDescription>
+                  Enter the total amount spent so far. Cost per lead updates automatically.
+                </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field id="c-name" label="Name" required className="sm:col-span-2">
-                  <Input id="c-name" name="name" defaultValue={editing.name || editing.utmCampaign} required />
+                  <Input
+                    id="c-name"
+                    name="name"
+                    defaultValue={editing.name || editing.utmCampaign}
+                    required
+                  />
                 </Field>
                 <Field id="c-utm" label="utm_campaign" required>
-                  <Input id="c-utm" name="utmCampaign" defaultValue={editing.utmCampaign} required className="font-mono" />
+                  <Input
+                    id="c-utm"
+                    name="utmCampaign"
+                    defaultValue={editing.utmCampaign}
+                    required
+                    className="font-mono"
+                  />
                 </Field>
                 <Field id="c-channel" label="Channel">
                   <Input id="c-channel" name="channel" defaultValue={editing.channel} />
                 </Field>
                 <Field id="c-spend" label="Total spend (₹)">
-                  <Input id="c-spend" name="spend" type="number" min={0} step="1" defaultValue={editing.spend ?? ""} />
+                  <Input
+                    id="c-spend"
+                    name="spend"
+                    type="number"
+                    min={0}
+                    step="1"
+                    defaultValue={editing.spend ?? ""}
+                  />
                 </Field>
                 <span />
                 <Field id="c-start" label="Start date">

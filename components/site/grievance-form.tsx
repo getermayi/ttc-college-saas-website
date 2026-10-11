@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState, useTransition } from "react";
-import { useForm, type FieldPath } from "react-hook-form";
+import { useForm, useWatch, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleCheck, Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
@@ -24,15 +24,32 @@ export function GrievanceForm() {
   const [token, setToken] = useState("");
   const [resetKey, setResetKey] = useState(0);
 
-  const { register, handleSubmit, formState, watch, setValue, setError, setFocus } = useForm<GrievanceInput>({
-    resolver: zodResolver(grievanceSchema) as never,
-    mode: "onTouched",
-    defaultValues: { anonymous: false, name: "", email: "", phone: "", role: "", category: "", subject: "", description: "", consent: false as unknown as true, website: "" },
-  });
-  const anonymous = watch("anonymous");
+  const { register, handleSubmit, formState, setValue, setError, setFocus, control } =
+    useForm<GrievanceInput>({
+      resolver: zodResolver(grievanceSchema) as never,
+      mode: "onTouched",
+      defaultValues: {
+        anonymous: false,
+        name: "",
+        email: "",
+        phone: "",
+        role: "",
+        category: "",
+        subject: "",
+        description: "",
+        consent: false as unknown as true,
+        website: "",
+      },
+    });
+  const anonymous = useWatch({ control, name: "anonymous" });
+  const consent = useWatch({ control, name: "consent" });
   const e = formState.errors;
   const err = (n: keyof GrievanceInput) => e[n]?.message as string | undefined;
-  const a = (n: keyof GrievanceInput) => ({ id: id(n), "aria-invalid": err(n) ? true : undefined, "aria-describedby": describedBy(id(n), { error: err(n) }) });
+  const a = (n: keyof GrievanceInput) => ({
+    id: id(n),
+    "aria-invalid": err(n) ? true : undefined,
+    "aria-describedby": describedBy(id(n), { error: err(n) }),
+  });
 
   const onSubmit = handleSubmit(
     (values) => {
@@ -52,7 +69,9 @@ export function GrievanceForm() {
         setToken("");
         setFormError(res.message);
         toast.error(res.message);
-        if (res.fieldErrors) for (const [k, m] of Object.entries(res.fieldErrors)) setError(k as FieldPath<GrievanceInput>, { message: m });
+        if (res.fieldErrors)
+          for (const [k, m] of Object.entries(res.fieldErrors))
+            setError(k as FieldPath<GrievanceInput>, { message: m });
       });
     },
     (errs) => {
@@ -63,15 +82,24 @@ export function GrievanceForm() {
 
   if (ticket !== null) {
     return (
-      <div role="status" className="rounded-3xl border border-success/30 bg-success-soft p-8 text-center text-success-soft-foreground">
+      <div
+        role="status"
+        className="border-success/30 bg-success-soft text-success-soft-foreground rounded-3xl border p-8 text-center"
+      >
         <CircleCheck className="mx-auto size-12" aria-hidden />
-        <h2 className="mt-4 font-display text-2xl font-semibold">Your grievance has been submitted</h2>
+        <h2 className="font-display mt-4 text-2xl font-semibold">Your grievance has been submitted</h2>
         {ticket ? (
           <p className="mt-3">
-            Your ticket number is <strong className="rounded-lg bg-white/60 px-2 py-0.5 font-mono dark:bg-black/30">{ticket}</strong>. Please note it down.
+            Your ticket number is{" "}
+            <strong className="rounded-lg bg-white/60 px-2 py-0.5 font-mono dark:bg-black/30">
+              {ticket}
+            </strong>
+            . Please note it down.
           </p>
         ) : null}
-        <p className="mt-3 opacity-90">The grievance redressal committee will review it. If you shared contact details, we will update you.</p>
+        <p className="mt-3 opacity-90">
+          The grievance redressal committee will review it. If you shared contact details, we will update you.
+        </p>
       </div>
     );
   }
@@ -79,17 +107,25 @@ export function GrievanceForm() {
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-5" aria-label="Grievance form">
       {formError ? (
-        <div role="alert" className="rounded-2xl border border-danger/30 bg-danger-soft px-4 py-3 text-sm font-medium text-danger-soft-foreground">
+        <div
+          role="alert"
+          className="border-danger/30 bg-danger-soft text-danger-soft-foreground rounded-2xl border px-4 py-3 text-sm font-medium"
+        >
           {formError}
         </div>
       ) : null}
 
-      <label htmlFor={id("anon")} className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-surface-2/60 p-4">
+      <label
+        htmlFor={id("anon")}
+        className="border-border bg-surface-2/60 flex items-center justify-between gap-4 rounded-2xl border p-4"
+      >
         <span className="flex items-start gap-3">
-          <ShieldCheck className="mt-0.5 size-5 text-primary" aria-hidden />
+          <ShieldCheck className="text-primary mt-0.5 size-5" aria-hidden />
           <span>
             <span className="block font-semibold">Submit anonymously</span>
-            <span className="text-sm text-muted-foreground">We won&apos;t store your name or contact details. We also won&apos;t be able to update you.</span>
+            <span className="text-muted-foreground text-sm">
+              We won&apos;t store your name or contact details. We also won&apos;t be able to update you.
+            </span>
           </span>
         </span>
         <Switch id={id("anon")} checked={anonymous} onCheckedChange={(v) => setValue("anonymous", v)} />
@@ -101,7 +137,13 @@ export function GrievanceForm() {
             <Input {...register("name")} {...a("name")} autoComplete="name" />
           </Field>
           <Field id={id("phone")} label="Mobile number" error={err("phone")}>
-            <Input {...register("phone")} {...a("phone")} type="tel" inputMode="tel" autoComplete="tel-national" />
+            <Input
+              {...register("phone")}
+              {...a("phone")}
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel-national"
+            />
           </Field>
           <Field id={id("email")} label="Email" error={err("email")}>
             <Input {...register("email")} {...a("email")} type="email" autoComplete="email" />
@@ -131,7 +173,12 @@ export function GrievanceForm() {
         <Input {...register("subject")} {...a("subject")} placeholder="A short summary" />
       </Field>
       <Field id={id("description")} label="Describe what happened" required error={err("description")}>
-        <Textarea {...register("description")} {...a("description")} rows={6} placeholder="Include dates, places and anything that helps us understand." />
+        <Textarea
+          {...register("description")}
+          {...a("description")}
+          rows={6}
+          placeholder="Include dates, places and anything that helps us understand."
+        />
       </Field>
 
       <div aria-hidden className="absolute left-[-10000px] size-px overflow-hidden">
@@ -139,18 +186,23 @@ export function GrievanceForm() {
       </div>
 
       <div>
-        <label htmlFor={id("consent")} className="flex cursor-pointer items-start gap-3 text-sm text-muted-foreground">
+        <label
+          htmlFor={id("consent")}
+          className="text-muted-foreground flex cursor-pointer items-start gap-3 text-sm"
+        >
           <Checkbox
             id={id("consent")}
             className="mt-0.5"
-            checked={watch("consent") === true}
-            onCheckedChange={(v) => setValue("consent", (v === true) as true, { shouldValidate: formState.isSubmitted })}
+            checked={consent === true}
+            onCheckedChange={(v) =>
+              setValue("consent", (v === true) as true, { shouldValidate: formState.isSubmitted })
+            }
             aria-invalid={err("consent") ? true : undefined}
           />
           I confirm the information I have shared is true to the best of my knowledge.
         </label>
         {err("consent") ? (
-          <p role="alert" className="mt-1.5 text-sm font-medium text-danger">
+          <p role="alert" className="text-danger mt-1.5 text-sm font-medium">
             {err("consent")}
           </p>
         ) : null}

@@ -2,11 +2,22 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useTransition } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Copy, ExternalLink, Eye, History, Loader2, RotateCcw, Save, Send, Trash2, Undo2 } from "lucide-react";
+import {
+  Copy,
+  ExternalLink,
+  Eye,
+  History,
+  Loader2,
+  RotateCcw,
+  Save,
+  Send,
+  Trash2,
+  Undo2,
+} from "lucide-react";
 import { buildSchema, type FormValues } from "@/lib/admin/fields";
 import { getResource } from "@/lib/admin/resources";
 import { deleteRecords, duplicateRecord, restoreVersion, saveRecord } from "@/lib/admin/resource-actions";
@@ -46,7 +57,11 @@ export function ResourceForm({
   const router = useRouter();
   const [pending, start] = useTransition();
   const schema = useMemo(() => buildSchema(config.fields), [config.fields]);
-  const form = useForm<FormValues>({ resolver: zodResolver(schema as never) as never, defaultValues: initialValues, mode: "onTouched" });
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema as never) as never,
+    defaultValues: initialValues,
+    mode: "onTouched",
+  });
   const { handleSubmit, formState, setError, reset } = form;
   const statusInFields = config.status && config.fields.some((f) => f.name === config.status!.field);
   const isPublished = config.status ? status === config.status.published : true;
@@ -60,6 +75,29 @@ export function ResourceForm({
     return () => window.removeEventListener("beforeunload", onBefore);
   }, [formState.isDirty]);
 
+  const submit = (nextStatus?: string) =>
+    handleSubmit(
+      (values) =>
+        start(async () => {
+          const res = await saveRecord(resourceKey, id, values, nextStatus);
+          if (!res.ok) {
+            toast.error(res.message);
+            if (res.fieldErrors)
+              for (const [k, m] of Object.entries(res.fieldErrors)) setError(k, { message: m });
+            return;
+          }
+          toast.success(
+            nextStatus === config.status?.published
+              ? "Published — it's live now."
+              : (res.message ?? "Saved."),
+          );
+          reset(values);
+          if (!id && res.data) router.replace(`/admin/content/${resourceKey}/${res.data.id}`);
+          else router.refresh();
+        }),
+      () => toast.error("Please fix the highlighted fields."),
+    )();
+
   // Ctrl/Cmd + S saves.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -72,30 +110,12 @@ export function ResourceForm({
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  const submit = (nextStatus?: string) =>
-    handleSubmit(
-      (values) =>
-        start(async () => {
-          const res = await saveRecord(resourceKey, id, values, nextStatus);
-          if (!res.ok) {
-            toast.error(res.message);
-            if (res.fieldErrors) for (const [k, m] of Object.entries(res.fieldErrors)) setError(k, { message: m });
-            return;
-          }
-          toast.success(nextStatus === config.status?.published ? "Published — it's live now." : (res.message ?? "Saved."));
-          reset(values);
-          if (!id && res.data) router.replace(`/admin/content/${resourceKey}/${res.data.id}`);
-          else router.refresh();
-        }),
-      () => toast.error("Please fix the highlighted fields."),
-    )();
-
   const groups = useMemo(() => {
     const main = config.fields.filter((f) => !f.group);
     const named = new Map<string, typeof config.fields>();
     for (const f of config.fields) if (f.group) named.set(f.group, [...(named.get(f.group) ?? []), f]);
     return { main, named: [...named.entries()] };
-  }, [config.fields]);
+  }, [config]);
 
   return (
     <MediaProvider initial={media}>
@@ -136,28 +156,48 @@ export function ResourceForm({
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold">Status</span>
                   {config.status ? (
-                    <Badge tone={isPublished ? "success" : "warning"}>{config.status.options.find((o) => o.value === status)?.label ?? "New"}</Badge>
+                    <Badge tone={isPublished ? "success" : "warning"}>
+                      {config.status.options.find((o) => o.value === status)?.label ?? "New"}
+                    </Badge>
                   ) : (
                     <Badge tone="primary">Live</Badge>
                   )}
                 </div>
-                {updatedAt ? <p className="text-xs text-muted-foreground">Last saved {formatDateTime(updatedAt)}</p> : null}
-                {formState.isDirty ? <p className="rounded-lg bg-warning-soft px-3 py-2 text-xs font-medium text-warning-soft-foreground">You have unsaved changes.</p> : null}
+                {updatedAt ? (
+                  <p className="text-muted-foreground text-xs">Last saved {formatDateTime(updatedAt)}</p>
+                ) : null}
+                {formState.isDirty ? (
+                  <p className="bg-warning-soft text-warning-soft-foreground rounded-lg px-3 py-2 text-xs font-medium">
+                    You have unsaved changes.
+                  </p>
+                ) : null}
                 <div className="grid gap-2">
                   {config.status && !statusInFields ? (
                     isPublished ? (
                       <>
                         <Button type="submit" disabled={pending}>
-                          {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Save aria-hidden />} Save changes
+                          {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Save aria-hidden />}{" "}
+                          Save changes
                         </Button>
-                        <Button type="button" variant="outline" disabled={pending} onClick={() => submit(config.status!.draft)}>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={pending}
+                          onClick={() => submit(config.status!.draft)}
+                        >
                           <Undo2 aria-hidden /> Unpublish (back to draft)
                         </Button>
                       </>
                     ) : (
                       <>
-                        <Button type="button" variant="accent" disabled={pending} onClick={() => submit(config.status!.published)}>
-                          {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Send aria-hidden />} Publish
+                        <Button
+                          type="button"
+                          variant="accent"
+                          disabled={pending}
+                          onClick={() => submit(config.status!.published)}
+                        >
+                          {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Send aria-hidden />}{" "}
+                          Publish
                         </Button>
                         <Button type="submit" variant="outline" disabled={pending}>
                           <Save aria-hidden /> Save draft
@@ -166,13 +206,14 @@ export function ResourceForm({
                     )
                   ) : (
                     <Button type="submit" disabled={pending}>
-                      {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Save aria-hidden />} Save changes
+                      {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Save aria-hidden />} Save
+                      changes
                     </Button>
                   )}
-                  <p className="text-center text-xs text-muted-foreground">Tip: press Ctrl + S to save</p>
+                  <p className="text-muted-foreground text-center text-xs">Tip: press Ctrl + S to save</p>
                 </div>
                 {id && (config.previewable || publicUrl) ? (
-                  <div className="grid gap-2 border-t border-border pt-4">
+                  <div className="border-border grid gap-2 border-t pt-4">
                     {config.previewable ? (
                       <Button asChild variant="ghost" size="sm">
                         <Link href={`/preview/${resourceKey}/${id}`} target="_blank">
@@ -190,7 +231,7 @@ export function ResourceForm({
                   </div>
                 ) : null}
                 {id ? (
-                  <div className="flex gap-2 border-t border-border pt-4">
+                  <div className="border-border flex gap-2 border-t pt-4">
                     {config.canCreate !== false ? (
                       <Button
                         type="button"
@@ -222,7 +263,7 @@ export function ResourceForm({
                           })
                         }
                         trigger={
-                          <Button type="button" variant="ghost" size="sm" className="flex-1 text-danger">
+                          <Button type="button" variant="ghost" size="sm" className="text-danger flex-1">
                             <Trash2 aria-hidden /> Delete
                           </Button>
                         }
@@ -255,10 +296,13 @@ function VersionHistory({ versions }: { versions: VersionInfo[] }) {
         {versions.length ? (
           <ol className="space-y-2">
             {versions.map((v) => (
-              <li key={v.id} className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-surface-2">
+              <li
+                key={v.id}
+                className="hover:bg-surface-2 flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm"
+              >
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{formatDateTime(v.createdAt)}</span>
-                  <span className="block truncate text-xs text-muted-foreground">
+                  <span className="text-muted-foreground block truncate text-xs">
                     {v.user ?? "System"}
                     {v.note ? ` · ${v.note}` : ""}
                   </span>
@@ -278,7 +322,13 @@ function VersionHistory({ versions }: { versions: VersionInfo[] }) {
                     })
                   }
                   trigger={
-                    <Button type="button" size="icon-sm" variant="ghost" aria-label="Restore this version" disabled={pending}>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label="Restore this version"
+                      disabled={pending}
+                    >
                       <RotateCcw aria-hidden />
                     </Button>
                   }
@@ -287,7 +337,7 @@ function VersionHistory({ versions }: { versions: VersionInfo[] }) {
             ))}
           </ol>
         ) : (
-          <p className="text-sm text-muted-foreground">Earlier versions appear here each time you save.</p>
+          <p className="text-muted-foreground text-sm">Earlier versions appear here each time you save.</p>
         )}
       </CardContent>
     </Card>

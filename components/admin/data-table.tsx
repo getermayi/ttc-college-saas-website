@@ -52,11 +52,23 @@ export function DataTable<T extends { id: string }>({
                 header: ({ table }) => (
                   <Checkbox
                     aria-label="Select all rows"
-                    checked={table.getIsAllRowsSelected() ? true : table.getIsSomeRowsSelected() ? "indeterminate" : false}
+                    checked={
+                      table.getIsAllRowsSelected()
+                        ? true
+                        : table.getIsSomeRowsSelected()
+                          ? "indeterminate"
+                          : false
+                    }
                     onCheckedChange={(v) => table.toggleAllRowsSelected(v === true)}
                   />
                 ),
-                cell: ({ row }) => <Checkbox aria-label="Select row" checked={row.getIsSelected()} onCheckedChange={(v) => row.toggleSelected(v === true)} />,
+                cell: ({ row }) => (
+                  <Checkbox
+                    aria-label="Select row"
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(v) => row.toggleSelected(v === true)}
+                  />
+                ),
               }),
             ]
           : []),
@@ -87,13 +99,21 @@ export function DataTable<T extends { id: string }>({
   const classFor = (id: string) => columns.find((c) => c.id === id)?.className;
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-[var(--shadow-soft)]">
+    <div className="border-border bg-surface overflow-x-auto rounded-2xl border shadow-[var(--shadow-soft)]">
       <table className="w-full text-left text-sm" style={{ minWidth }}>
-        <thead className="border-b border-border bg-surface-2/60 text-xs uppercase tracking-wider text-muted-foreground">
+        <thead className="border-border bg-surface-2/60 text-muted-foreground border-b text-xs tracking-wider uppercase">
           {table.getHeaderGroups().map((g) => (
             <tr key={g.id}>
               {g.headers.map((h) => (
-                <th key={h.id} scope="col" className={cn("px-3 py-3 font-semibold", h.column.id === "_select" && "w-10", classFor(h.column.id))}>
+                <th
+                  key={h.id}
+                  scope="col"
+                  className={cn(
+                    "px-3 py-3 font-semibold",
+                    h.column.id === "_select" && "w-10",
+                    classFor(h.column.id),
+                  )}
+                >
                   {h.isPlaceholder ? null : <table.FlexRender header={h} />}
                 </th>
               ))}
@@ -102,7 +122,14 @@ export function DataTable<T extends { id: string }>({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className={cn("border-b border-border last:border-0 hover:bg-surface-2/50", row.getIsSelected() && "bg-primary-soft/40", rowClassName?.(row.original))}>
+            <tr
+              key={row.id}
+              className={cn(
+                "border-border hover:bg-surface-2/50 border-b last:border-0",
+                row.getIsSelected() && "bg-primary-soft/40",
+                rowClassName?.(row.original),
+              )}
+            >
               {row.getAllCells().map((cell) => (
                 <td key={cell.id} className={cn("px-3 py-2.5 align-middle", classFor(cell.column.id))}>
                   <table.FlexRender cell={cell} />
@@ -112,7 +139,9 @@ export function DataTable<T extends { id: string }>({
           ))}
         </tbody>
       </table>
-      {!rows.length ? <div className="px-6 py-14 text-center text-muted-foreground">{empty ?? "Nothing to show."}</div> : null}
+      {!rows.length ? (
+        <div className="text-muted-foreground px-6 py-14 text-center">{empty ?? "Nothing to show."}</div>
+      ) : null}
     </div>
   );
 }

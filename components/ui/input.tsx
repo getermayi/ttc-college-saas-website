@@ -10,7 +10,11 @@ export function Input({ className, type = "text", ...props }: React.ComponentPro
 
 export function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
-    <textarea data-slot="textarea" className={cn(fieldBase, "min-h-28 py-3 leading-relaxed", className)} {...props} />
+    <textarea
+      data-slot="textarea"
+      className={cn(fieldBase, "min-h-28 py-3 leading-relaxed", className)}
+      {...props}
+    />
   );
 }
 
@@ -28,9 +32,15 @@ export function NativeSelect({ className, children, ...props }: React.ComponentP
       <svg
         aria-hidden
         viewBox="0 0 20 20"
-        className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+        className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2"
       >
-        <path d="M5 7.5 10 12.5 15 7.5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+        <path
+          d="M5 7.5 10 12.5 15 7.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+        />
       </svg>
     </div>
   );

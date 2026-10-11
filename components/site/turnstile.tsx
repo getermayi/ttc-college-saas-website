@@ -51,7 +51,11 @@ export function Turnstile({ onToken, resetKey }: { onToken: (token: string) => v
   if (!SITE_KEY) return null;
   return (
     <>
-      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="lazyOnload" onLoad={render} />
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        strategy="lazyOnload"
+        onLoad={render}
+      />
       <div ref={ref} className="min-h-[65px]" />
     </>
   );

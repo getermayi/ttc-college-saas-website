@@ -24,7 +24,10 @@ const DESCRIPTIONS: Partial<Record<(typeof DISCLOSURE_CATEGORIES)[number], strin
 
 export default async function DisclosuresPage() {
   const [downloads, settings] = await Promise.all([getDownloads(), getSettings()]);
-  const groups = DISCLOSURE_CATEGORIES.map((c) => ({ category: c, items: downloads.filter((d) => d.category === c) }));
+  const groups = DISCLOSURE_CATEGORIES.map((c) => ({
+    category: c,
+    items: downloads.filter((d) => d.category === c),
+  }));
   const visible = groups.filter((g) => g.items.length || g.category !== "OTHER");
   return (
     <>
@@ -39,16 +42,19 @@ export default async function DisclosuresPage() {
           <ul className="sticky top-28 space-y-1">
             {visible.map((g) => (
               <li key={g.category}>
-                <a href={`#${g.category.toLowerCase()}`} className="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-surface-2">
+                <a
+                  href={`#${g.category.toLowerCase()}`}
+                  className="hover:bg-surface-2 flex items-center justify-between rounded-xl px-3 py-2 text-sm"
+                >
                   {DOWNLOAD_CATEGORY_LABELS[g.category]}
-                  <span className="text-xs text-muted-foreground">{g.items.length}</span>
+                  <span className="text-muted-foreground text-xs">{g.items.length}</span>
                 </a>
               </li>
             ))}
           </ul>
         </nav>
         <div className="space-y-10 lg:col-span-9">
-          <div className="flex items-start gap-3 rounded-2xl border border-info/25 bg-info-soft p-4 text-sm text-info-soft-foreground">
+          <div className="border-info/25 bg-info-soft text-info-soft-foreground flex items-start gap-3 rounded-2xl border p-4 text-sm">
             <ShieldAlert className="mt-0.5 size-5 shrink-0" aria-hidden />
             <p>
               Need to raise a concern? Use our{" "}
@@ -59,11 +65,18 @@ export default async function DisclosuresPage() {
             </p>
           </div>
           {visible.map((g) => (
-            <section key={g.category} id={g.category.toLowerCase()} className="scroll-mt-28" aria-labelledby={`${g.category}-h`}>
+            <section
+              key={g.category}
+              id={g.category.toLowerCase()}
+              className="scroll-mt-28"
+              aria-labelledby={`${g.category}-h`}
+            >
               <h2 id={`${g.category}-h`} className="text-h3 font-semibold">
                 {DOWNLOAD_CATEGORY_LABELS[g.category]}
               </h2>
-              {DESCRIPTIONS[g.category] ? <p className="mt-1 text-sm text-muted-foreground">{DESCRIPTIONS[g.category]}</p> : null}
+              {DESCRIPTIONS[g.category] ? (
+                <p className="text-muted-foreground mt-1 text-sm">{DESCRIPTIONS[g.category]}</p>
+              ) : null}
               {g.items.length ? (
                 <ul className="mt-4 space-y-3">
                   {g.items.map((d) => (
@@ -73,7 +86,7 @@ export default async function DisclosuresPage() {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-4 flex items-center gap-3 rounded-2xl border border-dashed border-border-strong p-4 text-sm text-muted-foreground">
+                <p className="border-border-strong text-muted-foreground mt-4 flex items-center gap-3 rounded-2xl border border-dashed p-4 text-sm">
                   <FileClock className="size-5 shrink-0" aria-hidden />
                   Documents for this section will be published here.
                 </p>

@@ -27,30 +27,48 @@ export default async function CampusPage() {
         {facilities.length ? (
           <nav aria-label="Facilities on this page" className="-mt-4 flex flex-wrap gap-2">
             {facilities.map((f) => (
-              <a key={f.id} href={`#${f.slug}`} className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold hover:border-primary/50">
+              <a
+                key={f.id}
+                href={`#${f.slug}`}
+                className="border-border bg-surface hover:border-primary/50 rounded-full border px-4 py-2 text-sm font-semibold"
+              >
                 {f.name}
               </a>
             ))}
           </nav>
         ) : (
-          <EmptyState icon={<Trees />} title="Facility details are being updated" description="Photos and details of our classrooms, library and other spaces will appear here soon." />
+          <EmptyState
+            icon={<Trees />}
+            title="Facility details are being updated"
+            description="Photos and details of our classrooms, library and other spaces will appear here soon."
+          />
         )}
         {facilities.map((f, i) => (
           <section key={f.id} id={f.slug} className="scroll-mt-28" aria-labelledby={`${f.slug}-h`}>
-            <div className={cn("grid items-center gap-8 lg:grid-cols-2 lg:gap-14", i % 2 === 1 && "lg:[&>*:first-child]:order-2")}>
-              <Photo media={f.cover} label={f.cover ? undefined : f.name} className="aspect-[4/3]" variant={i} />
+            <div
+              className={cn(
+                "grid items-center gap-8 lg:grid-cols-2 lg:gap-14",
+                i % 2 === 1 && "lg:[&>*:first-child]:order-2",
+              )}
+            >
+              <Photo
+                media={f.cover}
+                label={f.cover ? undefined : f.name}
+                className="aspect-[4/3]"
+                variant={i}
+              />
               <div>
                 <Badge tone="primary">{f.category}</Badge>
-                <h2 id={`${f.slug}-h`} className="mt-3 text-h2 font-semibold">
+                <h2 id={`${f.slug}-h`} className="text-h2 mt-3 font-semibold">
                   {f.name}
                 </h2>
-                <p className="mt-3 text-lead text-muted-foreground">{f.summary}</p>
+                <p className="text-lead text-muted-foreground mt-3">{f.summary}</p>
                 <RichText html={f.description} className="mt-4" />
                 {f.highlights.length ? (
                   <ul className="mt-6 grid gap-2 sm:grid-cols-2">
                     {f.highlights.map((h) => (
                       <li key={h} className="flex items-center gap-2 text-sm font-medium">
-                        <span className="grid size-5 place-items-center rounded-full bg-success-soft text-success-soft-foreground">
+                        <span className="bg-success-soft text-success-soft-foreground grid size-5 place-items-center rounded-full">
                           <Check className="size-3" aria-hidden />
                         </span>
                         {h}
@@ -60,7 +78,13 @@ export default async function CampusPage() {
                 ) : null}
               </div>
             </div>
-            {f.images.length ? <LightboxGallery className="mt-8" title={f.name} images={f.images.map((img) => ({ media: img.media, caption: img.caption }))} /> : null}
+            {f.images.length ? (
+              <LightboxGallery
+                className="mt-8"
+                title={f.name}
+                images={f.images.map((img) => ({ media: img.media, caption: img.caption }))}
+              />
+            ) : null}
           </section>
         ))}
       </div>

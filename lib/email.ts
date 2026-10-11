@@ -41,5 +41,7 @@ export async function sendEmail({
 
 export function adminRecipients(settings: { admissionsEmail: string | null; email: string | null }) {
   const env = process.env.ADMISSIONS_NOTIFY_EMAIL?.split(",").map((s) => s.trim()) ?? [];
-  return [...new Set([...env, settings.admissionsEmail, settings.email].filter((v): v is string => Boolean(v)))];
+  return [
+    ...new Set([...env, settings.admissionsEmail, settings.email].filter((v): v is string => Boolean(v))),
+  ];
 }

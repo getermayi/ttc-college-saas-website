@@ -20,20 +20,26 @@ export function Field({ id, label, hint, error, required, optional, className, c
       <Label htmlFor={id}>
         {label}
         {required ? (
-          <span className="ml-0.5 text-accent" aria-hidden>
+          <span className="text-accent ml-0.5" aria-hidden>
             *
           </span>
         ) : null}
-        {optional ? <span className="ml-1.5 text-xs font-normal text-muted-foreground">(optional)</span> : null}
+        {optional ? (
+          <span className="text-muted-foreground ml-1.5 text-xs font-normal">(optional)</span>
+        ) : null}
       </Label>
       {hint ? (
-        <p id={`${id}-hint`} className="-mt-0.5 text-[0.825rem] leading-snug text-muted-foreground">
+        <p id={`${id}-hint`} className="text-muted-foreground -mt-0.5 text-[0.825rem] leading-snug">
           {hint}
         </p>
       ) : null}
       {children}
       {error ? (
-        <p id={`${id}-error`} role="alert" className="flex items-start gap-1.5 text-sm font-medium text-danger">
+        <p
+          id={`${id}-error`}
+          role="alert"
+          className="text-danger flex items-start gap-1.5 text-sm font-medium"
+        >
           <svg aria-hidden viewBox="0 0 20 20" className="mt-0.5 size-4 shrink-0" fill="currentColor">
             <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm-.75 4.5a.75.75 0 0 1 1.5 0v4a.75.75 0 0 1-1.5 0v-4ZM10 14.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
           </svg>

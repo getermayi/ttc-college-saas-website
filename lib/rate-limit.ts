@@ -4,9 +4,7 @@ import { Redis } from "@upstash/redis";
 
 type Result = { success: boolean; remaining: number; reset: number };
 
-const upstashConfigured = Boolean(
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
-);
+const upstashConfigured = Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
 
 const redis = upstashConfigured ? Redis.fromEnv() : null;
 const limiters = new Map<string, Ratelimit>();

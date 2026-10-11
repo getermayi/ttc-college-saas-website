@@ -22,13 +22,21 @@ export async function changeLeadStage(ids: string[], stage: string, lostReason?:
     const parsed = z.enum(LEAD_STAGES).safeParse(stage);
     if (!parsed.success || !ids.length) return { ok: false, message: "Choose a valid stage." };
     const next = parsed.data as LeadStageValue;
-    if ((next === "LOST" || next === "NOT_ELIGIBLE") && !lostReason?.trim()) return { ok: false, message: "Please add a reason." };
-    const leads = await prisma.lead.findMany({ where: { id: { in: ids } }, select: { id: true, stage: true, name: true } });
+    if ((next === "LOST" || next === "NOT_ELIGIBLE") && !lostReason?.trim())
+      return { ok: false, message: "Please add a reason." };
+    const leads = await prisma.lead.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, stage: true, name: true },
+    });
     const now = new Date();
     await prisma.$transaction([
       prisma.lead.updateMany({
         where: { id: { in: leads.filter((l) => l.stage !== next).map((l) => l.id) } },
-        data: { stage: next, stageChangedAt: now, lostReason: next === "LOST" || next === "NOT_ELIGIBLE" ? lostReason!.trim().slice(0, 300) : null },
+        data: {
+          stage: next,
+          stageChangedAt: now,
+          lostReason: next === "LOST" || next === "NOT_ELIGIBLE" ? lostReason!.trim().slice(0, 300) : null,
+        },
       }),
       prisma.leadActivity.createMany({
         data: leads
@@ -41,8 +49,20 @@ export async function changeLeadStage(ids: string[], stage: string, lostReason?:
           })),
       }),
     ]);
-    await audit(user, "stage", "lead", ids.length === 1 ? ids[0] : null, `Moved ${ids.length === 1 ? `"${leads[0]?.name}"` : `${ids.length} leads`} to ${LEAD_STAGE_LABELS[next]}`);
-    return { ok: true, message: ids.length === 1 ? `Moved to ${LEAD_STAGE_LABELS[next]}.` : `${ids.length} leads moved to ${LEAD_STAGE_LABELS[next]}.` };
+    await audit(
+      user,
+      "stage",
+      "lead",
+      ids.length === 1 ? ids[0] : null,
+      `Moved ${ids.length === 1 ? `"${leads[0]?.name}"` : `${ids.length} leads`} to ${LEAD_STAGE_LABELS[next]}`,
+    );
+    return {
+      ok: true,
+      message:
+        ids.length === 1
+          ? `Moved to ${LEAD_STAGE_LABELS[next]}.`
+          : `${ids.length} leads moved to ${LEAD_STAGE_LABELS[next]}.`,
+    };
   } catch (err) {
     return fail(err);
   }
@@ -54,14 +74,28 @@ export async function assignLeads(ids: string[], userId: string | null): Promise
     let assigneeName = "nobody";
     if (userId) {
       const assignee = await prisma.user.findFirst({ where: { id: userId, active: true } });
-      if (!assignee || !can(assignee.role, "leads")) return { ok: false, message: "That person can't be assigned leads." };
+      if (!assignee || !can(assignee.role, "leads"))
+        return { ok: false, message: "That person can't be assigned leads." };
       assigneeName = assignee.name;
     }
     await prisma.$transaction([
       prisma.lead.updateMany({ where: { id: { in: ids } }, data: { assignedToId: userId } }),
-      prisma.leadActivity.createMany({ data: ids.map((leadId) => ({ leadId, type: "ASSIGNMENT" as const, body: `Assigned to ${assigneeName}`, authorId: user.id })) }),
+      prisma.leadActivity.createMany({
+        data: ids.map((leadId) => ({
+          leadId,
+          type: "ASSIGNMENT" as const,
+          body: `Assigned to ${assigneeName}`,
+          authorId: user.id,
+        })),
+      }),
     ]);
-    await audit(user, "update", "lead", ids.length === 1 ? ids[0] : null, `Assigned ${ids.length} lead(s) to ${assigneeName}`);
+    await audit(
+      user,
+      "update",
+      "lead",
+      ids.length === 1 ? ids[0] : null,
+      `Assigned ${ids.length} lead(s) to ${assigneeName}`,
+    );
     return { ok: true, message: `Assigned to ${assigneeName}.` };
   } catch (err) {
     return fail(err);
@@ -71,10 +105,16 @@ export async function assignLeads(ids: string[], userId: string | null): Promise
 const activitySchema = z.object({
   type: z.enum(["NOTE", "CALL", "WHATSAPP", "EMAIL"]),
   body: z.string().trim().max(3000).default(""),
-  outcome: z.enum(CALL_OUTCOMES).optional().or(z.literal("").transform(() => undefined)),
+  outcome: z
+    .enum(CALL_OUTCOMES)
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
 });
 
-export async function addLeadActivity(leadId: string, input: z.input<typeof activitySchema>): Promise<Result> {
+export async function addLeadActivity(
+  leadId: string,
+  input: z.input<typeof activitySchema>,
+): Promise<Result> {
   try {
     const user = await assertCapability("leads");
     const parsed = activitySchema.safeParse(input);
@@ -86,20 +126,33 @@ export async function addLeadActivity(leadId: string, input: z.input<typeof acti
     const contacted = type !== "NOTE";
     const reached = contacted && (!outcome || outcome.startsWith("Spoke"));
     await prisma.$transaction([
-      prisma.leadActivity.create({ data: { leadId, type, body: body || outcome || "", outcome, authorId: user.id } }),
+      prisma.leadActivity.create({
+        data: { leadId, type, body: body || outcome || "", outcome, authorId: user.id },
+      }),
       ...(contacted
         ? [
             prisma.lead.update({
               where: { id: leadId },
               data: {
                 lastContactedAt: new Date(),
-                ...(lead.stage === "NEW" && reached ? { stage: "CONTACTED", stageChangedAt: new Date() } : {}),
+                ...(lead.stage === "NEW" && reached
+                  ? { stage: "CONTACTED", stageChangedAt: new Date() }
+                  : {}),
               },
             }),
           ]
         : []),
       ...(lead.stage === "NEW" && reached
-        ? [prisma.leadActivity.create({ data: { leadId, type: "STAGE_CHANGE", body: "Stage changed from New enquiry to Contacted (automatic after a successful contact)", authorId: user.id } })]
+        ? [
+            prisma.leadActivity.create({
+              data: {
+                leadId,
+                type: "STAGE_CHANGE",
+                body: "Stage changed from New enquiry to Contacted (automatic after a successful contact)",
+                authorId: user.id,
+              },
+            }),
+          ]
         : []),
     ]);
     return { ok: true, message: type === "NOTE" ? "Note added." : "Contact logged." };
@@ -108,13 +161,30 @@ export async function addLeadActivity(leadId: string, input: z.input<typeof acti
   }
 }
 
-export async function addFollowUp(leadId: string, input: { dueAt: string; note?: string; assignedToId?: string | null }): Promise<Result> {
+export async function addFollowUp(
+  leadId: string,
+  input: { dueAt: string; note?: string; assignedToId?: string | null },
+): Promise<Result> {
   try {
     const user = await assertCapability("leads");
     const due = new Date(`${input.dueAt}:00+05:30`);
     if (Number.isNaN(due.getTime())) return { ok: false, message: "Choose a date and time." };
-    await prisma.followUp.create({ data: { leadId, dueAt: due, note: input.note?.trim().slice(0, 500) || null, assignedToId: input.assignedToId || user.id } });
-    await prisma.leadActivity.create({ data: { leadId, type: "SYSTEM", body: `Follow-up scheduled${input.note ? `: ${input.note.trim()}` : ""}`, authorId: user.id } });
+    await prisma.followUp.create({
+      data: {
+        leadId,
+        dueAt: due,
+        note: input.note?.trim().slice(0, 500) || null,
+        assignedToId: input.assignedToId || user.id,
+      },
+    });
+    await prisma.leadActivity.create({
+      data: {
+        leadId,
+        type: "SYSTEM",
+        body: `Follow-up scheduled${input.note ? `: ${input.note.trim()}` : ""}`,
+        authorId: user.id,
+      },
+    });
     return { ok: true, message: "Follow-up scheduled." };
   } catch (err) {
     return fail(err);
@@ -143,7 +213,10 @@ export async function deleteFollowUp(id: string): Promise<Result> {
 
 const detailsSchema = z.object({
   name: z.string().trim().min(2).max(100),
-  phone: z.string().trim().refine((v) => normaliseIndianPhone(v) !== null, "Invalid phone"),
+  phone: z
+    .string()
+    .trim()
+    .refine((v) => normaliseIndianPhone(v) !== null, "Invalid phone"),
   email: z.union([z.literal(""), z.email()]).optional(),
   district: z.string().trim().max(60).optional(),
   percentage: z.union([z.literal(""), z.coerce.number().min(0).max(100)]).optional(),
@@ -153,11 +226,18 @@ export async function updateLeadDetails(id: string, input: z.input<typeof detail
   try {
     const user = await assertCapability("leads");
     const parsed = detailsSchema.safeParse(input);
-    if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Please check the details." };
+    if (!parsed.success)
+      return { ok: false, message: parsed.error.issues[0]?.message ?? "Please check the details." };
     const d = parsed.data;
     await prisma.lead.update({
       where: { id },
-      data: { name: d.name, phone: normaliseIndianPhone(d.phone)!, email: d.email || null, district: d.district || null, percentage: d.percentage === "" || d.percentage === undefined ? null : d.percentage },
+      data: {
+        name: d.name,
+        phone: normaliseIndianPhone(d.phone)!,
+        email: d.email || null,
+        district: d.district || null,
+        percentage: d.percentage === "" || d.percentage === undefined ? null : d.percentage,
+      },
     });
     await audit(user, "update", "lead", id, `Edited details for lead "${d.name}"`);
     return { ok: true, message: "Details saved." };
@@ -195,11 +275,15 @@ const campaignSchema = z.object({
   notes: z.string().trim().max(1000).optional(),
 });
 
-export async function saveCampaign(id: string | null, input: z.input<typeof campaignSchema>): Promise<Result> {
+export async function saveCampaign(
+  id: string | null,
+  input: z.input<typeof campaignSchema>,
+): Promise<Result> {
   try {
     const user = await assertCapability("leads");
     const parsed = campaignSchema.safeParse(input);
-    if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Please check the form." };
+    if (!parsed.success)
+      return { ok: false, message: parsed.error.issues[0]?.message ?? "Please check the form." };
     const d = parsed.data;
     const data = {
       name: d.name,
@@ -210,11 +294,19 @@ export async function saveCampaign(id: string | null, input: z.input<typeof camp
       endDate: d.endDate ? new Date(`${d.endDate}T23:59:59+05:30`) : null,
       notes: d.notes || null,
     };
-    const clash = await prisma.campaign.findFirst({ where: { utmCampaign: data.utmCampaign, ...(id ? { NOT: { id } } : {}) } });
+    const clash = await prisma.campaign.findFirst({
+      where: { utmCampaign: data.utmCampaign, ...(id ? { NOT: { id } } : {}) },
+    });
     if (clash) return { ok: false, message: "A campaign with this utm_campaign already exists." };
     if (id) await prisma.campaign.update({ where: { id }, data });
     else await prisma.campaign.create({ data });
-    await audit(user, id ? "update" : "create", "campaign", id, `${id ? "Updated" : "Added"} campaign "${data.name}"`);
+    await audit(
+      user,
+      id ? "update" : "create",
+      "campaign",
+      id,
+      `${id ? "Updated" : "Added"} campaign "${data.name}"`,
+    );
     return { ok: true, message: "Campaign saved." };
   } catch (err) {
     return fail(err);
@@ -234,7 +326,10 @@ export async function deleteCampaign(id: string): Promise<Result> {
 
 // ── Grievances ──────────────────────────────────────────────
 
-export async function updateGrievance(id: string, input: { status: string; resolution?: string; internalNotes?: string; assignedToId?: string | null }): Promise<Result> {
+export async function updateGrievance(
+  id: string,
+  input: { status: string; resolution?: string; internalNotes?: string; assignedToId?: string | null },
+): Promise<Result> {
   try {
     const user = await assertCapability("grievances");
     const status = z.enum(["OPEN", "IN_REVIEW", "RESOLVED", "CLOSED"]).parse(input.status);
@@ -247,13 +342,23 @@ export async function updateGrievance(id: string, input: { status: string; resol
         resolution: input.resolution?.trim().slice(0, 5000) || null,
         internalNotes: input.internalNotes?.trim().slice(0, 5000) || null,
         assignedToId: input.assignedToId || null,
-        resolvedAt: (status === "RESOLVED" || status === "CLOSED") && !before.resolvedAt ? new Date() : status === "OPEN" || status === "IN_REVIEW" ? null : before.resolvedAt,
+        resolvedAt:
+          (status === "RESOLVED" || status === "CLOSED") && !before.resolvedAt
+            ? new Date()
+            : status === "OPEN" || status === "IN_REVIEW"
+              ? null
+              : before.resolvedAt,
       },
     });
-    await audit(user, "update", "grievance", id, `Updated grievance ${before.ticket}${before.status !== status ? ` → ${status}` : ""}`);
+    await audit(
+      user,
+      "update",
+      "grievance",
+      id,
+      `Updated grievance ${before.ticket}${before.status !== status ? ` → ${status}` : ""}`,
+    );
     return { ok: true, message: "Grievance updated." };
   } catch (err) {
     return fail(err);
   }
 }
-

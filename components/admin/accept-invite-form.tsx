@@ -9,7 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 
-export function AcceptInviteForm({ token, askName, defaultName }: { token: string; askName: boolean; defaultName: string }) {
+export function AcceptInviteForm({
+  token,
+  askName,
+  defaultName,
+}: {
+  token: string;
+  askName: boolean;
+  defaultName: string;
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +28,12 @@ export function AcceptInviteForm({ token, askName, defaultName }: { token: strin
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
         start(async () => {
-          const res = await acceptInvite({ token, name: String(fd.get("name") ?? ""), password: String(fd.get("password")), confirm: String(fd.get("confirm")) });
+          const res = await acceptInvite({
+            token,
+            name: String(fd.get("name") ?? ""),
+            password: String(fd.get("password")),
+            confirm: String(fd.get("confirm")),
+          });
           if (!res.ok) return setError(res.message);
           toast.success(res.message);
           router.push("/admin/login");
@@ -28,7 +41,10 @@ export function AcceptInviteForm({ token, askName, defaultName }: { token: strin
       }}
     >
       {error ? (
-        <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger-soft-foreground">
+        <p
+          role="alert"
+          className="bg-danger-soft text-danger-soft-foreground rounded-xl px-4 py-3 text-sm font-medium"
+        >
           {error}
         </p>
       ) : null}
@@ -38,7 +54,15 @@ export function AcceptInviteForm({ token, askName, defaultName }: { token: strin
         </Field>
       ) : null}
       <Field id="password" label="New password" hint="At least 10 characters, with letters and a number.">
-        <Input id="password" name="password" type="password" autoComplete="new-password" required minLength={10} aria-describedby="password-hint" />
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          required
+          minLength={10}
+          aria-describedby="password-hint"
+        />
       </Field>
       <Field id="confirm" label="Confirm password">
         <Input id="confirm" name="confirm" type="password" autoComplete="new-password" required />

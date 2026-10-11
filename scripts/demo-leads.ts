@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }) });
-const pick = <T,>(a: readonly T[]) => a[Math.floor(Math.random() * a.length)];
+const pick = <T>(a: readonly T[]) => a[Math.floor(Math.random() * a.length)];
 
 async function main() {
   if (process.argv.includes("--clear")) {
@@ -23,7 +23,19 @@ async function main() {
     return;
   }
   const bed = await prisma.programme.findUnique({ where: { slug: "bed" } });
-  const stages = ["NEW", "NEW", "NEW", "CONTACTED", "CONTACTED", "ELIGIBLE", "APPLICATION_STARTED", "APPLICATION_SUBMITTED", "ENROLLED", "LOST", "NOT_ELIGIBLE"] as const;
+  const stages = [
+    "NEW",
+    "NEW",
+    "NEW",
+    "CONTACTED",
+    "CONTACTED",
+    "ELIGIBLE",
+    "APPLICATION_STARTED",
+    "APPLICATION_SUBMITTED",
+    "ENROLLED",
+    "LOST",
+    "NOT_ELIGIBLE",
+  ] as const;
   const sources = [
     { source: "Meta Ads", utmSource: "facebook", utmMedium: "paid_social", utmCampaign: "demo-bed-2026" },
     { source: "Meta Ads", utmSource: "instagram", utmMedium: "paid_social", utmCampaign: "demo-bed-2026" },
@@ -31,7 +43,15 @@ async function main() {
     { source: "Direct", utmSource: null, utmMedium: null, utmCampaign: null },
     { source: "WhatsApp", utmSource: "whatsapp", utmMedium: "share", utmCampaign: null },
   ];
-  const districts = ["West Siang", "Lower Siang", "Siang", "East Siang", "Papum Pare", "Lepa Rada", "Upper Subansiri"];
+  const districts = [
+    "West Siang",
+    "Lower Siang",
+    "Siang",
+    "East Siang",
+    "Papum Pare",
+    "Lepa Rada",
+    "Upper Subansiri",
+  ];
   for (let i = 1; i <= 40; i++) {
     const created = new Date(Date.now() - Math.random() * 28 * 86_400_000);
     const stage = pick(stages);
@@ -54,7 +74,8 @@ async function main() {
         stage,
         stageChangedAt: created,
         lastContactedAt: stage === "NEW" ? null : new Date(created.getTime() + 86_400_000),
-        lostReason: stage === "LOST" ? "Not reachable" : stage === "NOT_ELIGIBLE" ? "Marks below cut-off" : null,
+        lostReason:
+          stage === "LOST" ? "Not reachable" : stage === "NOT_ELIGIBLE" ? "Marks below cut-off" : null,
         ...src,
         activities: { create: { type: "SYSTEM", body: "Demo lead created", createdAt: created } },
       },

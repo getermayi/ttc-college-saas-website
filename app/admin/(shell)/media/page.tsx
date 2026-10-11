@@ -14,7 +14,17 @@ export default async function MediaPage({ searchParams }: PageProps<"/admin/medi
   const kind = sp.kind === "IMAGE" || sp.kind === "DOCUMENT" ? sp.kind : undefined;
   const q = typeof sp.q === "string" ? sp.q : undefined;
   const items = await prisma.media.findMany({
-    where: { ...(kind ? { kind } : {}), ...(q ? { OR: [{ alt: { contains: q, mode: "insensitive" } }, { filename: { contains: q, mode: "insensitive" } }] } : {}) },
+    where: {
+      ...(kind ? { kind } : {}),
+      ...(q
+        ? {
+            OR: [
+              { alt: { contains: q, mode: "insensitive" } },
+              { filename: { contains: q, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    },
     orderBy: { createdAt: "desc" },
     take: 300,
   });
@@ -25,10 +35,21 @@ export default async function MediaPage({ searchParams }: PageProps<"/admin/medi
   ];
   return (
     <>
-      <AdminPageHeader title="Media library" description="Photos and PDFs used across the website. Alt text is required for every image — it helps blind visitors and search engines." />
+      <AdminPageHeader
+        title="Media library"
+        description="Photos and PDFs used across the website. Alt text is required for every image — it helps blind visitors and search engines."
+      />
       <div className="mb-4 flex gap-1.5">
         {tabs.map((t) => (
-          <Link key={t.label} href={t.href} aria-current={t.active ? "page" : undefined} className={cn("rounded-full border px-3.5 py-1.5 text-sm font-medium", t.active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-surface")}>
+          <Link
+            key={t.label}
+            href={t.href}
+            aria-current={t.active ? "page" : undefined}
+            className={cn(
+              "rounded-full border px-3.5 py-1.5 text-sm font-medium",
+              t.active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-surface",
+            )}
+          >
             {t.label}
           </Link>
         ))}

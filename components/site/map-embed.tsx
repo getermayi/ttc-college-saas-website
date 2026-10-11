@@ -7,16 +7,25 @@ import { MapPin } from "lucide-react";
 export function MapEmbed({ src, title }: { src: string; title: string }) {
   const [load, setLoad] = useState(false);
   if (load) {
-    return <iframe src={src} title={title} className="aspect-[4/3] w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />;
+    return (
+      <iframe
+        src={src}
+        title={title}
+        className="aspect-[4/3] w-full border-0"
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+      />
+    );
   }
   return (
     <button
       type="button"
       onClick={() => setLoad(true)}
-      className="motif-texture group relative grid aspect-[4/3] w-full place-items-center bg-primary-soft text-primary-soft-foreground"
+      className="motif-texture group bg-primary-soft text-primary-soft-foreground relative grid aspect-[4/3] w-full place-items-center"
     >
       <span className="flex flex-col items-center gap-3">
-        <span className="grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-lift)] transition-transform group-hover:scale-105">
+        <span className="bg-primary text-primary-foreground grid size-14 place-items-center rounded-full shadow-[var(--shadow-lift)] transition-transform group-hover:scale-105">
           <MapPin className="size-6" aria-hidden />
         </span>
         <span className="font-semibold">Show map</span>

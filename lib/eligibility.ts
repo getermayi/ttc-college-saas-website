@@ -26,12 +26,21 @@ export type EligibilityResult = {
 const APPEARING: Record<string, string> = { BACHELORS_APPEARING: "BACHELORS", MASTERS_APPEARING: "MASTERS" };
 
 /** Pure eligibility logic shared by the public checker and its tests. */
-export function checkEligibility(rules: EligibilityRuleLite[], a: EligibilityAnswers, programmeName: string): EligibilityResult {
+export function checkEligibility(
+  rules: EligibilityRuleLite[],
+  a: EligibilityAnswers,
+  programmeName: string,
+): EligibilityResult {
   const rule = rules.find((r) => r.category === a.category);
   const nextSteps: string[] = [];
-  if (a.inService) nextSteps.push("As an in-service teacher you get preference. Ask your employer for a No Objection Certificate (NOC).");
-  if (a.otherUniversity) nextSteps.push("Your degree is from another university, so you will need a migration certificate.");
-  if (a.category !== "GENERAL") nextSteps.push(`Keep your ${CATEGORY_LABELS[a.category]} category certificate ready.`);
+  if (a.inService)
+    nextSteps.push(
+      "As an in-service teacher you get preference. Ask your employer for a No Objection Certificate (NOC).",
+    );
+  if (a.otherUniversity)
+    nextSteps.push("Your degree is from another university, so you will need a migration certificate.");
+  if (a.category !== "GENERAL")
+    nextSteps.push(`Keep your ${CATEGORY_LABELS[a.category]} category certificate ready.`);
 
   if (!rule) {
     return {
@@ -57,8 +66,15 @@ export function checkEligibility(rules: EligibilityRuleLite[], a: EligibilityAns
     return {
       status: "likely",
       title: "You are likely eligible",
-      message: rule.resultNote ?? "A relaxation in marks applies to your category. Our admissions team will confirm the exact cut-off.",
-      nextSteps: appearing ? ["Your final result is awaited — you may be able to apply provisionally. Please confirm with us.", ...nextSteps] : nextSteps,
+      message:
+        rule.resultNote ??
+        "A relaxation in marks applies to your category. Our admissions team will confirm the exact cut-off.",
+      nextSteps: appearing
+        ? [
+            "Your final result is awaited — you may be able to apply provisionally. Please confirm with us.",
+            ...nextSteps,
+          ]
+        : nextSteps,
     };
   }
 

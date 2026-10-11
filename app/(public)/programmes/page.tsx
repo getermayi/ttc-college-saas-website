@@ -27,7 +27,11 @@ export default async function ProgrammesPage() {
             ))}
           </div>
         ) : (
-          <EmptyState icon={<GraduationCap />} title="Programme details are being updated" description="Please check back soon, or contact the college office." />
+          <EmptyState
+            icon={<GraduationCap />}
+            title="Programme details are being updated"
+            description="Please check back soon, or contact the college office."
+          />
         )}
       </section>
     </>

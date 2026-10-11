@@ -15,10 +15,7 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
 });
 
-async function createIfMissing<T>(
-  find: () => Promise<T | null>,
-  create: () => Promise<unknown>,
-) {
+async function createIfMissing<T>(find: () => Promise<T | null>, create: () => Promise<unknown>) {
   const existing = await find();
   if (!existing) await create();
 }
@@ -44,8 +41,10 @@ async function seedSettings() {
       district: "West Siang",
       state: "Arunachal Pradesh",
       postalCode: "791001",
-      mapLink: "https://www.google.com/maps/search/?api=1&query=Teacher+Training+College+Aalo+Bogdo+West+Siang",
-      mapEmbedUrl: "https://www.google.com/maps?q=Bogdo,+Aalo,+West+Siang,+Arunachal+Pradesh+791001&output=embed",
+      mapLink:
+        "https://www.google.com/maps/search/?api=1&query=Teacher+Training+College+Aalo+Bogdo+West+Siang",
+      mapEmbedUrl:
+        "https://www.google.com/maps?q=Bogdo,+Aalo,+West+Siang,+Arunachal+Pradesh+791001&output=embed",
       whatsappMessage: "Hello TTC Aalo, I would like to know more about B.Ed. admissions.",
       admissionsOpen: true,
       admissionsSession: "2026–27",
@@ -109,7 +108,8 @@ const SEO_ENTRIES: { path: string; label: string; title: string; description: st
     path: "/campus",
     label: "Campus & facilities",
     title: "Campus and facilities — TTC Aalo",
-    description: "A green, 30-acre campus near Aalo, West Siang. Explore our classrooms, library and learning spaces.",
+    description:
+      "A green, 30-acre campus near Aalo, West Siang. Explore our classrooms, library and learning spaces.",
   },
   {
     path: "/events",
@@ -140,13 +140,15 @@ const SEO_ENTRIES: { path: string; label: string; title: string; description: st
     path: "/contact",
     label: "Contact",
     title: "Contact TTC Aalo",
-    description: "Find us at Bogdo, Aalo, West Siang, Arunachal Pradesh – 791001. Call, WhatsApp or send an enquiry.",
+    description:
+      "Find us at Bogdo, Aalo, West Siang, Arunachal Pradesh – 791001. Call, WhatsApp or send an enquiry.",
   },
   {
     path: "/grievance",
     label: "Grievance",
     title: "Submit a grievance — TTC Aalo",
-    description: "Raise a concern safely. Every grievance gets a ticket number and is reviewed by the college.",
+    description:
+      "Raise a concern safely. Every grievance gets a ticket number and is reviewed by the college.",
   },
 ];
 
@@ -221,7 +223,8 @@ const SECTIONS: SectionSeed[] = [
       {
         icon: "presentation",
         title: "Practical teaching from the start",
-        description: "You learn by doing — lesson planning, micro-teaching and real classroom practice with guidance.",
+        description:
+          "You learn by doing — lesson planning, micro-teaching and real classroom practice with guidance.",
       },
       {
         icon: "award",
@@ -231,7 +234,8 @@ const SECTIONS: SectionSeed[] = [
       {
         icon: "heart-handshake",
         title: "Rooted in community",
-        description: "We prepare teachers for rural and underserved schools, where good teaching changes the most.",
+        description:
+          "We prepare teachers for rural and underserved schools, where good teaching changes the most.",
       },
       {
         icon: "lightbulb",
@@ -241,7 +245,8 @@ const SECTIONS: SectionSeed[] = [
       {
         icon: "briefcase",
         title: "Welcome, in-service teachers",
-        description: "Eligible in-service teachers get preference in admission (an NOC from your employer is required).",
+        description:
+          "Eligible in-service teachers get preference in admission (an NOC from your employer is required).",
       },
       {
         icon: "trees",
@@ -310,7 +315,8 @@ const SECTIONS: SectionSeed[] = [
     label: "Final call to action",
     order: 10,
     title: "Ready to take the first step?",
-    subtitle: "Check your eligibility in under a minute. Our team will call you back and guide you through the rest.",
+    subtitle:
+      "Check your eligibility in under a minute. Our team will call you back and guide you through the rest.",
     ctaLabel: "Check eligibility & enquire",
     ctaHref: "/enquire",
     secondaryCtaLabel: "Visit us",
@@ -335,8 +341,7 @@ const SECTIONS: SectionSeed[] = [
     order: 1,
     eyebrow: "Our story",
     title: "Started in Aalo, for Arunachal",
-    body:
-      "<p>TTC Aalo was established in 2011 with a simple aim: to give young people in Arunachal Pradesh a good place to train as teachers, close to home.</p><p>Our campus covers about 30 acres of green land near Aalo. Over the years, the college has grown as a home for future teachers from across West Siang, the wider state and the Northeast.</p>",
+    body: "<p>TTC Aalo was established in 2011 with a simple aim: to give young people in Arunachal Pradesh a good place to train as teachers, close to home.</p><p>Our campus covers about 30 acres of green land near Aalo. Over the years, the college has grown as a home for future teachers from across West Siang, the wider state and the Northeast.</p>",
   },
   {
     page: "about",
@@ -347,12 +352,36 @@ const SECTIONS: SectionSeed[] = [
     title: "What we work for",
     subtitle: "Every programme, class and workshop at TTC Aalo connects to these goals.",
     items: [
-      { icon: "graduation-cap", title: "Qualified, competent teachers", description: "Develop teachers who are well-qualified, skilled and confident in the classroom." },
-      { icon: "scale", title: "Ethical practice", description: "Build honesty, care and responsibility into everyday teaching." },
-      { icon: "book-open", title: "Better classroom learning", description: "Improve how children learn, through better planning and teaching methods." },
-      { icon: "users", title: "Leadership & social responsibility", description: "Help teachers lead in their schools and serve their communities." },
-      { icon: "mountain", title: "Rural & underserved communities", description: "Support education where it is needed most." },
-      { icon: "flask-conical", title: "Research & practice", description: "Encourage research, workshops, seminars and practical teaching." },
+      {
+        icon: "graduation-cap",
+        title: "Qualified, competent teachers",
+        description: "Develop teachers who are well-qualified, skilled and confident in the classroom.",
+      },
+      {
+        icon: "scale",
+        title: "Ethical practice",
+        description: "Build honesty, care and responsibility into everyday teaching.",
+      },
+      {
+        icon: "book-open",
+        title: "Better classroom learning",
+        description: "Improve how children learn, through better planning and teaching methods.",
+      },
+      {
+        icon: "users",
+        title: "Leadership & social responsibility",
+        description: "Help teachers lead in their schools and serve their communities.",
+      },
+      {
+        icon: "mountain",
+        title: "Rural & underserved communities",
+        description: "Support education where it is needed most.",
+      },
+      {
+        icon: "flask-conical",
+        title: "Research & practice",
+        description: "Encourage research, workshops, seminars and practical teaching.",
+      },
     ],
   },
   {
@@ -362,8 +391,7 @@ const SECTIONS: SectionSeed[] = [
     order: 3,
     eyebrow: "Management",
     title: "Marjum Welfare Society",
-    body:
-      "<p>TTC Aalo is managed by Marjum Welfare Society. The society guides the college's development and works to keep quality teacher education within reach of students in Arunachal Pradesh.</p>",
+    body: "<p>TTC Aalo is managed by Marjum Welfare Society. The society guides the college's development and works to keep quality teacher education within reach of students in Arunachal Pradesh.</p>",
   },
   {
     page: "about",
@@ -373,9 +401,21 @@ const SECTIONS: SectionSeed[] = [
     eyebrow: "Milestones",
     title: "Our journey",
     items: [
-      { value: "2011", title: "TTC Aalo is established", description: "The college opens at Bogdo, Aalo under Marjum Welfare Society." },
-      { value: "B.Ed.", title: "Recognised and affiliated", description: "Our B.Ed. is recognised by NCTE and affiliated to Rajiv Gandhi University." },
-      { value: "2026–27", title: "Admissions for the new session", description: "Enquiries are open for the 2026–27 session." },
+      {
+        value: "2011",
+        title: "TTC Aalo is established",
+        description: "The college opens at Bogdo, Aalo under Marjum Welfare Society.",
+      },
+      {
+        value: "B.Ed.",
+        title: "Recognised and affiliated",
+        description: "Our B.Ed. is recognised by NCTE and affiliated to Rajiv Gandhi University.",
+      },
+      {
+        value: "2026–27",
+        title: "Admissions for the new session",
+        description: "Enquiries are open for the 2026–27 session.",
+      },
     ],
   },
 
@@ -398,11 +438,29 @@ const SECTIONS: SectionSeed[] = [
     eyebrow: "How it works",
     title: "Five simple steps",
     items: [
-      { title: "Check your eligibility", description: "Use the eligibility checker below. It takes less than a minute." },
-      { title: "Send an enquiry", description: "Share your details and our admissions team will call you back to answer your questions." },
-      { title: "Apply when the form is released", description: "Fill in the application form once the admission notice is published on our Notices page." },
-      { title: "Merit list & document check", description: "Selection is merit-based. If you are selected, bring your original documents for verification." },
-      { title: "Confirm your seat", description: "Complete the admission formalities and fee payment to confirm your seat." },
+      {
+        title: "Check your eligibility",
+        description: "Use the eligibility checker below. It takes less than a minute.",
+      },
+      {
+        title: "Send an enquiry",
+        description:
+          "Share your details and our admissions team will call you back to answer your questions.",
+      },
+      {
+        title: "Apply when the form is released",
+        description:
+          "Fill in the application form once the admission notice is published on our Notices page.",
+      },
+      {
+        title: "Merit list & document check",
+        description:
+          "Selection is merit-based. If you are selected, bring your original documents for verification.",
+      },
+      {
+        title: "Confirm your seat",
+        description: "Complete the admission formalities and fee payment to confirm your seat.",
+      },
     ],
   },
   {
@@ -412,14 +470,27 @@ const SECTIONS: SectionSeed[] = [
     order: 2,
     eyebrow: "Keep these ready",
     title: "Document checklist",
-    subtitle: "The final list will be confirmed in the official admission notice. Carry originals and two photocopies of each.",
+    subtitle:
+      "The final list will be confirmed in the official admission notice. Carry originals and two photocopies of each.",
     items: [
-      { title: "Bachelor's degree mark sheets and certificate", description: "And Master's degree documents, if you have one." },
+      {
+        title: "Bachelor's degree mark sheets and certificate",
+        description: "And Master's degree documents, if you have one.",
+      },
       { title: "Class 10 certificate", description: "As proof of your date of birth." },
       { title: "Class 12 mark sheet", description: "" },
-      { title: "Migration certificate", description: "Only if you graduated from a university other than Rajiv Gandhi University." },
-      { title: "Category certificate", description: "Only if you are applying for a reserved-category relaxation." },
-      { title: "No Objection Certificate (NOC)", description: "Only for in-service teachers, from your employer." },
+      {
+        title: "Migration certificate",
+        description: "Only if you graduated from a university other than Rajiv Gandhi University.",
+      },
+      {
+        title: "Category certificate",
+        description: "Only if you are applying for a reserved-category relaxation.",
+      },
+      {
+        title: "No Objection Certificate (NOC)",
+        description: "Only for in-service teachers, from your employer.",
+      },
       { title: "Photo ID proof", description: "Such as Aadhaar card or voter ID." },
       { title: "Recent passport-size photographs", description: "" },
     ],
@@ -504,11 +575,13 @@ async function seedProgrammes() {
         },
         {
           category: "In-service teachers",
-          requirement: "Eligible in-service teachers get preference. A No Objection Certificate (NOC) from your employer is required.",
+          requirement:
+            "Eligible in-service teachers get preference. A No Objection Certificate (NOC) from your employer is required.",
         },
         {
           category: "Graduates of other universities",
-          requirement: "A migration certificate is required if your degree is not from Rajiv Gandhi University.",
+          requirement:
+            "A migration certificate is required if your degree is not from Rajiv Gandhi University.",
         },
       ],
       eligibilityNotes: "Selection is based on merit.",
@@ -524,10 +597,24 @@ async function seedProgrammes() {
         "School internship and teaching practice",
       ],
       careers: [
-        { title: "School teacher", description: "Teach in government and private schools, subject to each employer's recruitment rules." },
-        { title: "Teacher eligibility tests", description: "A B.Ed. is one of the qualifications that lets you prepare for teacher eligibility tests such as CTET and state TETs." },
-        { title: "Further study", description: "Continue to M.Ed. or other postgraduate studies in education." },
-        { title: "Education & community work", description: "Work with education programmes, NGOs and community learning centres." },
+        {
+          title: "School teacher",
+          description:
+            "Teach in government and private schools, subject to each employer's recruitment rules.",
+        },
+        {
+          title: "Teacher eligibility tests",
+          description:
+            "A B.Ed. is one of the qualifications that lets you prepare for teacher eligibility tests such as CTET and state TETs.",
+        },
+        {
+          title: "Further study",
+          description: "Continue to M.Ed. or other postgraduate studies in education.",
+        },
+        {
+          title: "Education & community work",
+          description: "Work with education programmes, NGOs and community learning centres.",
+        },
       ],
       fees: [],
       documents: [
@@ -554,11 +641,11 @@ async function seedProgrammes() {
       name: "Bachelor of Arts (B.A.)",
       shortName: "B.A.",
       level: "Undergraduate degree",
-      summary:
-        "Undergraduate study in History, Geography, Education, Political Science and Economics.",
+      summary: "Undergraduate study in History, Geography, Education, Political Science and Economics.",
       overview: "<p>Subjects: History, Geography, Education, Political Science and Economics.</p>",
       subjects: ["History", "Geography", "Education", "Political Science", "Economics"],
-      approvalNote: "RGU approval in principle from 2023–24. Confirm current status before making this programme public.",
+      approvalNote:
+        "RGU approval in principle from 2023–24. Confirm current status before making this programme public.",
       status: "VERIFY",
       order: 1,
     },
@@ -597,10 +684,38 @@ async function seedProgrammes() {
           resultNote: "You need at least 50% marks in your Bachelor's or Master's degree.",
           order: 0,
         },
-        { programmeId: bed.id, category: "SC", qualifications: degrees, minPercent: null, resultNote: relaxationNote, order: 1 },
-        { programmeId: bed.id, category: "ST", qualifications: degrees, minPercent: null, resultNote: relaxationNote, order: 2 },
-        { programmeId: bed.id, category: "OBC", qualifications: degrees, minPercent: null, resultNote: relaxationNote, order: 3 },
-        { programmeId: bed.id, category: "PWD", qualifications: degrees, minPercent: null, resultNote: relaxationNote, order: 4 },
+        {
+          programmeId: bed.id,
+          category: "SC",
+          qualifications: degrees,
+          minPercent: null,
+          resultNote: relaxationNote,
+          order: 1,
+        },
+        {
+          programmeId: bed.id,
+          category: "ST",
+          qualifications: degrees,
+          minPercent: null,
+          resultNote: relaxationNote,
+          order: 2,
+        },
+        {
+          programmeId: bed.id,
+          category: "OBC",
+          qualifications: degrees,
+          minPercent: null,
+          resultNote: relaxationNote,
+          order: 3,
+        },
+        {
+          programmeId: bed.id,
+          category: "PWD",
+          qualifications: degrees,
+          minPercent: null,
+          resultNote: relaxationNote,
+          order: 4,
+        },
         {
           programmeId: bed.id,
           category: "EWS",
@@ -645,7 +760,8 @@ async function seedFacilities() {
       slug: "classrooms",
       category: "Academic",
       summary: "Classrooms for lectures, group work and teaching practice.",
-      description: "<p>Add details about classrooms here (number of rooms, seating, teaching aids) and publish when ready.</p>",
+      description:
+        "<p>Add details about classrooms here (number of rooms, seating, teaching aids) and publish when ready.</p>",
       status: "DRAFT",
       order: 1,
     },
@@ -654,7 +770,8 @@ async function seedFacilities() {
       slug: "library",
       category: "Library",
       summary: "Books, journals and a quiet space to read.",
-      description: "<p>Add details about the library here (collection size, reading room, timings) and publish when ready.</p>",
+      description:
+        "<p>Add details about the library here (collection size, reading room, timings) and publish when ready.</p>",
       status: "DRAFT",
       order: 2,
     },
@@ -672,7 +789,8 @@ async function seedFacilities() {
       slug: "hostel",
       category: "Residential",
       summary: "Residential facilities for students.",
-      description: "<p>If the college offers hostel accommodation, add the details here (capacity, rules, fees) and publish.</p>",
+      description:
+        "<p>If the college offers hostel accommodation, add the details here (capacity, rules, fees) and publish.</p>",
       status: "DRAFT",
       order: 4,
     },
@@ -762,8 +880,7 @@ async function seedNotices() {
       title: "B.Ed. admissions 2026–27: enquiries are open",
       category: "ADMISSION",
       summary: "Send an enquiry and our admissions team will call you back.",
-      body:
-        "<p>We are now taking enquiries for B.Ed. admission for the 2026–27 session. Use the eligibility checker on our Admissions page, then send us your details through the enquiry form. Our admissions team will call you back.</p><p>Important dates and the application form will be published on this Notices page.</p>",
+      body: "<p>We are now taking enquiries for B.Ed. admission for the 2026–27 session. Use the eligibility checker on our Admissions page, then send us your details through the enquiry form. Our admissions team will call you back.</p><p>Important dates and the application form will be published on this Notices page.</p>",
       pinned: true,
       status: "PUBLISHED",
     },
@@ -805,7 +922,9 @@ async function seedSuperAdmin() {
   const email = process.env.SEED_ADMIN_EMAIL?.toLowerCase().trim();
   const password = process.env.SEED_ADMIN_PASSWORD;
   if (!email || !password) {
-    console.log("ℹ︎  SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD not set — skipping super admin. Run `npm run create-admin` later.");
+    console.log(
+      "ℹ︎  SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD not set — skipping super admin. Run `npm run create-admin` later.",
+    );
     return;
   }
   if (password.length < 10) throw new Error("SEED_ADMIN_PASSWORD must be at least 10 characters.");

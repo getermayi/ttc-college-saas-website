@@ -15,14 +15,21 @@ export async function generateMetadata({ params }: PageProps<"/admin/content/[re
   return { title: getResource(resource)?.label ?? "Content" };
 }
 
-export default async function ResourceIndexPage({ params, searchParams }: PageProps<"/admin/content/[resource]">) {
+export default async function ResourceIndexPage({
+  params,
+  searchParams,
+}: PageProps<"/admin/content/[resource]">) {
   await requireCapability("content");
   const { resource } = await params;
   const config = getResource(resource);
   if (!config) notFound();
   const sp = await searchParams;
   const str = (v: unknown) => (typeof v === "string" ? v : undefined);
-  const { rows, total } = await listRecords(config, { q: str(sp.q), status: str(sp.status), group: str(sp.group) });
+  const { rows, total } = await listRecords(config, {
+    q: str(sp.q),
+    status: str(sp.status),
+    group: str(sp.group),
+  });
   return (
     <>
       <AdminPageHeader
@@ -38,7 +45,12 @@ export default async function ResourceIndexPage({ params, searchParams }: PagePr
           ) : null
         }
       />
-      <ResourceList resourceKey={config.key} rows={rows} total={total} />
+      <ResourceList
+        key={rows.map((r) => `${r.id}${String(r.updatedAt ?? "")}`).join()}
+        resourceKey={config.key}
+        rows={rows}
+        total={total}
+      />
     </>
   );
 }

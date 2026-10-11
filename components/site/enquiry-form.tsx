@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useState, useTransition } from "react";
-import { useForm, type FieldPath } from "react-hook-form";
+import { useForm, useWatch, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, CircleCheck, Loader2, Phone } from "lucide-react";
 import { toast } from "sonner";
@@ -26,7 +26,9 @@ import { Turnstile, turnstileEnabled } from "./turnstile";
 import { trackLead } from "./consent";
 import { WhatsAppIcon } from "./brand-icons";
 
-export type EnquiryPrefill = Partial<Pick<EnquiryInput, "programmeId" | "qualification" | "category">> & { percentage?: number | string };
+export type EnquiryPrefill = Partial<Pick<EnquiryInput, "programmeId" | "qualification" | "category">> & {
+  percentage?: number | string;
+};
 
 export function EnquiryForm({
   programmes,
@@ -71,7 +73,8 @@ export function EnquiryForm({
       website: "",
     },
   });
-  const { register, handleSubmit, formState, setValue, setError, watch, setFocus } = form;
+  const { register, handleSubmit, formState, setValue, setError, setFocus, control } = form;
+  const consent = useWatch({ control, name: "consent" });
   const errors = formState.errors;
 
   useEffect(() => {
@@ -79,7 +82,8 @@ export function EnquiryForm({
     if (prefill.programmeId) setValue("programmeId", prefill.programmeId);
     if (prefill.qualification) setValue("qualification", prefill.qualification);
     if (prefill.category) setValue("category", prefill.category);
-    if (prefill.percentage !== undefined && prefill.percentage !== "") setValue("percentage", String(prefill.percentage));
+    if (prefill.percentage !== undefined && prefill.percentage !== "")
+      setValue("percentage", String(prefill.percentage));
   }, [prefill, setValue]);
 
   const onSubmit = handleSubmit(
@@ -91,18 +95,30 @@ export function EnquiryForm({
       }
       const attribution = readAttribution() ?? {};
       startTransition(async () => {
-        const res = await submitEnquiry({ ...(values as unknown as EnquiryInput), ...attribution, formName, turnstileToken });
+        const res = await submitEnquiry({
+          ...(values as unknown as EnquiryInput),
+          ...attribution,
+          formName,
+          turnstileToken,
+        });
         if (res.ok) {
           setDone(res.data ?? { firstName: "", programme: "" });
           trackLead(res.data?.programme);
-          window.scrollTo({ top: Math.max(0, (document.getElementById(id("form"))?.getBoundingClientRect().top ?? 0) + window.scrollY - 120), behavior: "smooth" });
+          window.scrollTo({
+            top: Math.max(
+              0,
+              (document.getElementById(id("form"))?.getBoundingClientRect().top ?? 0) + window.scrollY - 120,
+            ),
+            behavior: "smooth",
+          });
           return;
         }
         setResetKey((k) => k + 1);
         setTurnstileToken("");
         setFormError(res.message);
         if (res.fieldErrors) {
-          for (const [k, msg] of Object.entries(res.fieldErrors)) setError(k as FieldPath<EnquiryInput>, { message: msg });
+          for (const [k, msg] of Object.entries(res.fieldErrors))
+            setError(k as FieldPath<EnquiryInput>, { message: msg });
         }
         toast.error(res.message);
       });
@@ -115,15 +131,24 @@ export function EnquiryForm({
 
   if (done) {
     return (
-      <div id={id("form")} role="status" aria-live="polite" className={cn("rounded-3xl border border-success/30 bg-success-soft p-7 text-center md:p-10", className)}>
-        <div className="mx-auto grid size-16 place-items-center rounded-full bg-success text-white dark:text-black">
+      <div
+        id={id("form")}
+        role="status"
+        aria-live="polite"
+        className={cn(
+          "border-success/30 bg-success-soft rounded-3xl border p-7 text-center md:p-10",
+          className,
+        )}
+      >
+        <div className="bg-success mx-auto grid size-16 place-items-center rounded-full text-white dark:text-black">
           <CircleCheck className="size-8" aria-hidden />
         </div>
-        <h3 className="mt-5 font-display text-2xl font-semibold text-success-soft-foreground">
+        <h3 className="font-display text-success-soft-foreground mt-5 text-2xl font-semibold">
           Thank you{done.firstName ? `, ${done.firstName}` : ""}! We&apos;ve got your enquiry.
         </h3>
-        <p className="mx-auto mt-3 max-w-md text-success-soft-foreground/90">
-          Our admissions team will call you soon{done.programme ? ` about the ${done.programme}` : ""}. If you shared your email, a confirmation is on its way.
+        <p className="text-success-soft-foreground/90 mx-auto mt-3 max-w-md">
+          Our admissions team will call you soon{done.programme ? ` about the ${done.programme}` : ""}. If you
+          shared your email, a confirmation is on its way.
         </p>
         <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
           {whatsappUrl ? (
@@ -156,9 +181,18 @@ export function EnquiryForm({
   });
 
   return (
-    <form id={id("form")} onSubmit={onSubmit} noValidate className={cn("grid gap-5", className)} aria-label="Admission enquiry form">
+    <form
+      id={id("form")}
+      onSubmit={onSubmit}
+      noValidate
+      className={cn("grid gap-5", className)}
+      aria-label="Admission enquiry form"
+    >
       {formError ? (
-        <div role="alert" className="rounded-2xl border border-danger/30 bg-danger-soft px-4 py-3 text-sm font-medium text-danger-soft-foreground">
+        <div
+          role="alert"
+          className="border-danger/30 bg-danger-soft text-danger-soft-foreground rounded-2xl border px-4 py-3 text-sm font-medium"
+        >
           {formError}
         </div>
       ) : null}
@@ -167,10 +201,26 @@ export function EnquiryForm({
         <Field id={id("name")} label="Full name" required error={err("name")}>
           <Input {...register("name")} {...aria("name")} autoComplete="name" placeholder="e.g. Yamin Bagra" />
         </Field>
-        <Field id={id("phone")} label="Mobile number" required error={err("phone")} hint="We'll call you on this number.">
+        <Field
+          id={id("phone")}
+          label="Mobile number"
+          required
+          error={err("phone")}
+          hint="We'll call you on this number."
+        >
           <div className="relative">
-            <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[0.975rem] text-muted-foreground">+91</span>
-            <Input {...register("phone")} {...aria("phone", true)} type="tel" inputMode="tel" autoComplete="tel-national" placeholder="98765 43210" className="pl-12" />
+            <span className="text-muted-foreground pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-[0.975rem]">
+              +91
+            </span>
+            <Input
+              {...register("phone")}
+              {...aria("phone", true)}
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel-national"
+              placeholder="98765 43210"
+              className="pl-12"
+            />
           </div>
         </Field>
       </div>
@@ -199,7 +249,13 @@ export function EnquiryForm({
       </div>
 
       <div className="grid gap-5 sm:grid-cols-3">
-        <Field id={id("qualification")} label="Highest qualification" required error={err("qualification")} className="sm:col-span-2">
+        <Field
+          id={id("qualification")}
+          label="Highest qualification"
+          required
+          error={err("qualification")}
+          className="sm:col-span-2"
+        >
           <NativeSelect {...register("qualification")} {...aria("qualification")}>
             <option value="">Choose qualification</option>
             {QUALIFICATIONS.map((q) => (
@@ -210,7 +266,16 @@ export function EnquiryForm({
           </NativeSelect>
         </Field>
         <Field id={id("percentage")} label="Marks (%)" optional error={err("percentage")}>
-          <Input {...register("percentage")} {...aria("percentage")} type="number" inputMode="decimal" step="0.01" min={0} max={100} placeholder="e.g. 58" />
+          <Input
+            {...register("percentage")}
+            {...aria("percentage")}
+            type="number"
+            inputMode="decimal"
+            step="0.01"
+            min={0}
+            max={100}
+            placeholder="e.g. 58"
+          />
         </Field>
       </div>
 
@@ -236,12 +301,25 @@ export function EnquiryForm({
         </Field>
       </div>
 
-      <Field id={id("email")} label="Email" optional error={err("email")} hint="Add it to get a confirmation email.">
-        <Input {...register("email")} {...aria("email", true)} type="email" inputMode="email" autoComplete="email" placeholder="you@example.com" />
+      <Field
+        id={id("email")}
+        label="Email"
+        optional
+        error={err("email")}
+        hint="Add it to get a confirmation email."
+      >
+        <Input
+          {...register("email")}
+          {...aria("email", true)}
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+        />
       </Field>
 
-      <details className="group rounded-2xl border border-border bg-surface-2/50 px-4 py-3 [&_summary::-webkit-details-marker]:hidden">
-        <summary className="cursor-pointer list-none text-sm font-semibold text-foreground">
+      <details className="group border-border bg-surface-2/50 rounded-2xl border px-4 py-3 [&_summary::-webkit-details-marker]:hidden">
+        <summary className="text-foreground cursor-pointer list-none text-sm font-semibold">
           <span className="inline-block transition-transform group-open:rotate-90" aria-hidden>
             ›
           </span>{" "}
@@ -251,36 +329,50 @@ export function EnquiryForm({
           <label htmlFor={id("message")} className="sr-only">
             Your question or message
           </label>
-          <Textarea {...register("message")} id={id("message")} placeholder="Anything you'd like to ask us?" rows={3} />
+          <Textarea
+            {...register("message")}
+            id={id("message")}
+            placeholder="Anything you'd like to ask us?"
+            rows={3}
+          />
         </div>
       </details>
 
       {/* Honeypot — hidden from people, tempting for bots */}
-      <div aria-hidden className="absolute left-[-10000px] top-auto size-px overflow-hidden">
+      <div aria-hidden className="absolute top-auto left-[-10000px] size-px overflow-hidden">
         <label htmlFor={id("website")}>Website</label>
         <input {...register("website")} id={id("website")} tabIndex={-1} autoComplete="off" />
       </div>
 
       <div>
-        <label htmlFor={id("consent")} className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-surface p-4 text-sm leading-relaxed has-[[aria-invalid=true]]:border-danger">
+        <label
+          htmlFor={id("consent")}
+          className="border-border bg-surface has-[[aria-invalid=true]]:border-danger flex cursor-pointer items-start gap-3 rounded-2xl border p-4 text-sm leading-relaxed"
+        >
           <Checkbox
             id={id("consent")}
-            checked={watch("consent") === true}
-            onCheckedChange={(v) => setValue("consent", (v === true) as true, { shouldValidate: formState.isSubmitted })}
+            checked={consent === true}
+            onCheckedChange={(v) =>
+              setValue("consent", (v === true) as true, { shouldValidate: formState.isSubmitted })
+            }
             aria-invalid={err("consent") ? true : undefined}
             aria-describedby={err("consent") ? `${id("consent")}-error` : undefined}
             className="mt-0.5"
           />
           <span className="text-muted-foreground">
             {CONSENT_TEXT.replace(" as explained in the privacy policy.", "")}{" "}
-            <Link href="/privacy-policy" className="font-medium text-primary underline underline-offset-2" target="_blank">
+            <Link
+              href="/privacy-policy"
+              className="text-primary font-medium underline underline-offset-2"
+              target="_blank"
+            >
               Privacy policy
             </Link>
             .
           </span>
         </label>
         {err("consent") ? (
-          <p id={`${id("consent")}-error`} role="alert" className="mt-1.5 text-sm font-medium text-danger">
+          <p id={`${id("consent")}-error`} role="alert" className="text-danger mt-1.5 text-sm font-medium">
             {err("consent")}
           </p>
         ) : null}
@@ -288,7 +380,13 @@ export function EnquiryForm({
 
       <Turnstile onToken={setTurnstileToken} resetKey={resetKey} />
 
-      <Button type="submit" variant="accent" size="lg" className="h-14 w-full text-base sm:w-auto sm:justify-self-start sm:px-10" disabled={pending}>
+      <Button
+        type="submit"
+        variant="accent"
+        size="lg"
+        className="h-14 w-full text-base sm:w-auto sm:justify-self-start sm:px-10"
+        disabled={pending}
+      >
         {pending ? (
           <>
             <Loader2 className="animate-spin" aria-hidden /> Sending…
@@ -299,7 +397,9 @@ export function EnquiryForm({
           </>
         )}
       </Button>
-      <p className="-mt-2 text-xs text-muted-foreground">It takes about a minute. We never share your details.</p>
+      <p className="text-muted-foreground -mt-2 text-xs">
+        It takes about a minute. We never share your details.
+      </p>
     </form>
   );
 }

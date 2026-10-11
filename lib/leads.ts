@@ -3,7 +3,10 @@ export function deriveSource(utmSource?: string | null, referrer?: string | null
   const s = (utmSource ?? "").toLowerCase();
   const m = (utmMedium ?? "").toLowerCase();
   if (s) {
-    if (/(facebook|fb|meta|ig|instagram)/.test(s)) return m.includes("paid") || m.includes("cpc") || m.includes("ads") ? "Meta Ads" : "Facebook / Instagram";
+    if (/(facebook|fb|meta|ig|instagram)/.test(s))
+      return m.includes("paid") || m.includes("cpc") || m.includes("ads")
+        ? "Meta Ads"
+        : "Facebook / Instagram";
     if (/google/.test(s)) return m.includes("cpc") || m.includes("paid") ? "Google Ads" : "Google";
     if (/whatsapp|wa/.test(s)) return "WhatsApp";
     if (/youtube/.test(s)) return "YouTube";

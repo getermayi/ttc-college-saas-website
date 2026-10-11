@@ -1,14 +1,7 @@
 import type { RoleValue } from "@/lib/constants";
 
 export type Capability =
-  | "dashboard"
-  | "leads"
-  | "content"
-  | "media"
-  | "settings"
-  | "users"
-  | "grievances"
-  | "audit";
+  "dashboard" | "leads" | "content" | "media" | "settings" | "users" | "grievances" | "audit";
 
 const MATRIX: Record<RoleValue, Capability[]> = {
   SUPER_ADMIN: ["dashboard", "leads", "content", "media", "settings", "users", "grievances", "audit"],

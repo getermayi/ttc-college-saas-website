@@ -25,7 +25,9 @@ export default async function ShellLayout({ children }: LayoutProps<"/admin">) {
               { href: "/admin/campaigns", label: "Campaigns", icon: "campaigns" },
             ]
           : []),
-        ...(can(user.role, "grievances") ? [{ href: "/admin/grievances", label: "Grievances", icon: "grievances", badge: openGrievances }] : []),
+        ...(can(user.role, "grievances")
+          ? [{ href: "/admin/grievances", label: "Grievances", icon: "grievances", badge: openGrievances }]
+          : []),
       ],
     },
     ...(can(user.role, "content")
@@ -41,7 +43,9 @@ export default async function ShellLayout({ children }: LayoutProps<"/admin">) {
       label: "System",
       items: [
         ...(can(user.role, "media") ? [{ href: "/admin/media", label: "Media library", icon: "media" }] : []),
-        ...(can(user.role, "settings") ? [{ href: "/admin/settings", label: "Site settings", icon: "settings" }] : []),
+        ...(can(user.role, "settings")
+          ? [{ href: "/admin/settings", label: "Site settings", icon: "settings" }]
+          : []),
         ...(can(user.role, "users") ? [{ href: "/admin/users", label: "Users", icon: "users" }] : []),
         ...(can(user.role, "audit") ? [{ href: "/admin/audit", label: "Audit log", icon: "audit" }] : []),
       ],
@@ -49,7 +53,10 @@ export default async function ShellLayout({ children }: LayoutProps<"/admin">) {
   ].filter((g) => g.items.length);
 
   return (
-    <AdminShell user={{ name: user.name, email: user.email, roleLabel: ROLE_LABELS[user.role] }} groups={groups}>
+    <AdminShell
+      user={{ name: user.name, email: user.email, roleLabel: ROLE_LABELS[user.role] }}
+      groups={groups}
+    >
       {children}
     </AdminShell>
   );

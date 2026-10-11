@@ -20,7 +20,11 @@ const schema = buildSchema(SETTINGS_FIELDS);
 export function SettingsForm({ initial, media }: { initial: FormValues; media: MediaLite[] }) {
   const router = useRouter();
   const [pending, start] = useTransition();
-  const form = useForm<FormValues>({ resolver: zodResolver(schema as never) as never, defaultValues: initial, mode: "onTouched" });
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema as never) as never,
+    defaultValues: initial,
+    mode: "onTouched",
+  });
   const groups = [...new Set(SETTINGS_FIELDS.map((f) => f.group!))];
   const onSubmit = form.handleSubmit(
     (values) =>
@@ -28,7 +32,8 @@ export function SettingsForm({ initial, media }: { initial: FormValues; media: M
         const res = await saveSettings(values);
         if (!res.ok) {
           toast.error(res.message);
-          if ("fieldErrors" in res && res.fieldErrors) for (const [k, m] of Object.entries(res.fieldErrors)) form.setError(k, { message: m });
+          if ("fieldErrors" in res && res.fieldErrors)
+            for (const [k, m] of Object.entries(res.fieldErrors)) form.setError(k, { message: m });
           return;
         }
         toast.success(res.message);
@@ -45,7 +50,10 @@ export function SettingsForm({ initial, media }: { initial: FormValues; media: M
             <ul className="sticky top-24 space-y-1 text-sm">
               {groups.map((g) => (
                 <li key={g}>
-                  <a href={`#${g.replace(/\W+/g, "-")}`} className="block rounded-lg px-3 py-2 text-muted-foreground hover:bg-surface-2 hover:text-foreground">
+                  <a
+                    href={`#${g.replace(/\W+/g, "-")}`}
+                    className="text-muted-foreground hover:bg-surface-2 hover:text-foreground block rounded-lg px-3 py-2"
+                  >
                     {g.replace(/ \(.*\)/, "")}
                   </a>
                 </li>
@@ -67,7 +75,8 @@ export function SettingsForm({ initial, media }: { initial: FormValues; media: M
             ))}
             <div className="sticky bottom-4 z-10 flex justify-end">
               <Button type="submit" size="lg" disabled={pending} className="shadow-[var(--shadow-float)]">
-                {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Save aria-hidden />} Save settings
+                {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Save aria-hidden />} Save
+                settings
               </Button>
             </div>
           </div>

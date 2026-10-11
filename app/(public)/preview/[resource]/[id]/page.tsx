@@ -19,15 +19,25 @@ async function PreviewContent({ params }: { params: Promise<{ resource: string; 
   let body: React.ReactNode = null;
 
   if (resource === "notices") {
-    const n = await prisma.notice.findUnique({ where: { id }, include: { attachment: { select: mediaSelect } } });
+    const n = await prisma.notice.findUnique({
+      where: { id },
+      include: { attachment: { select: mediaSelect } },
+    });
     if (!n) notFound();
     body = <NoticeArticle notice={n} />;
   } else if (resource === "pages") {
-    const p = await prisma.page.findUnique({ where: { id }, include: { heroImage: { select: mediaSelect } } });
+    const p = await prisma.page.findUnique({
+      where: { id },
+      include: { heroImage: { select: mediaSelect } },
+    });
     if (!p) notFound();
     body = (
       <>
-        <PageHeader crumbs={[{ name: p.title, href: `/${p.slug}` }]} title={p.title} description={p.excerpt} />
+        <PageHeader
+          crumbs={[{ name: p.title, href: `/${p.slug}` }]}
+          title={p.title}
+          description={p.excerpt}
+        />
         <div className="container-page pb-8">
           {p.heroImage ? <Photo media={p.heroImage} className="mb-10 aspect-[21/9]" /> : null}
           <RichText html={p.body} />
@@ -38,14 +48,21 @@ async function PreviewContent({ params }: { params: Promise<{ resource: string; 
     const e = await prisma.event.findUnique({ where: { id }, include: { cover: { select: mediaSelect } } });
     if (!e) notFound();
     body = (
-      <article className="container-page max-w-4xl pb-8 pt-10">
+      <article className="container-page max-w-4xl pt-10 pb-8">
         <h1 className="text-h1 font-semibold">{e.title}</h1>
-        <p className="mt-3 text-muted-foreground">
-          {formatDate(e.startsAt, { weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "2-digit" })}
+        <p className="text-muted-foreground mt-3">
+          {formatDate(e.startsAt, {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          })}
           {e.location ? ` · ${e.location}` : ""}
         </p>
         <Photo media={e.cover} label={e.cover ? undefined : e.title} className="mt-8 aspect-[16/9]" />
-        <p className="mt-8 text-lead text-muted-foreground">{e.summary}</p>
+        <p className="text-lead text-muted-foreground mt-8">{e.summary}</p>
         <RichText html={e.body} className="mt-6" />
       </article>
     );
@@ -54,7 +71,15 @@ async function PreviewContent({ params }: { params: Promise<{ resource: string; 
     if (!p) notFound();
     body = (
       <>
-        <PageHeader crumbs={[{ name: "Programmes", href: "/programmes" }, { name: p.shortName, href: `/programmes/${p.slug}` }]} eyebrow={p.level} title={p.name} description={p.summary} />
+        <PageHeader
+          crumbs={[
+            { name: "Programmes", href: "/programmes" },
+            { name: p.shortName, href: `/programmes/${p.slug}` },
+          ]}
+          eyebrow={p.level}
+          title={p.name}
+          description={p.summary}
+        />
         <div className="container-page pb-8">
           <RichText html={p.overview} />
         </div>
@@ -64,8 +89,9 @@ async function PreviewContent({ params }: { params: Promise<{ resource: string; 
 
   return (
     <>
-      <div className="sticky top-0 z-50 flex items-center justify-center gap-2 bg-warning px-4 py-2 text-sm font-semibold text-black">
-        <Eye className="size-4" aria-hidden /> Preview — this is how it will look. Drafts are not visible to the public.
+      <div className="bg-warning sticky top-0 z-50 flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-black">
+        <Eye className="size-4" aria-hidden /> Preview — this is how it will look. Drafts are not visible to
+        the public.
       </div>
       {body}
     </>
@@ -74,7 +100,11 @@ async function PreviewContent({ params }: { params: Promise<{ resource: string; 
 
 export default function PreviewPage({ params }: PageProps<"/preview/[resource]/[id]">) {
   return (
-    <Suspense fallback={<div className="container-page py-20 text-center text-muted-foreground">Loading preview…</div>}>
+    <Suspense
+      fallback={
+        <div className="container-page text-muted-foreground py-20 text-center">Loading preview…</div>
+      }
+    >
       <PreviewContent params={params} />
     </Suspense>
   );

@@ -22,8 +22,13 @@ export type NoticeArticleData = {
 
 export function NoticeArticle({ notice: n }: { notice: NoticeArticleData }) {
   return (
-    <article className="container-page max-w-3xl pb-8 pt-6 md:pt-10">
-      <Breadcrumbs items={[{ name: "Notices", href: "/notices" }, { name: truncate(n.title, 40), href: `/notices/${n.slug}` }]} />
+    <article className="container-page max-w-3xl pt-6 pb-8 md:pt-10">
+      <Breadcrumbs
+        items={[
+          { name: "Notices", href: "/notices" },
+          { name: truncate(n.title, 40), href: `/notices/${n.slug}` },
+        ]}
+      />
       <header className="mt-8">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="primary">{NOTICE_CATEGORY_LABELS[n.category]}</Badge>
@@ -32,18 +37,18 @@ export function NoticeArticle({ notice: n }: { notice: NoticeArticleData }) {
               <Pin aria-hidden /> Pinned
             </Badge>
           ) : null}
-          <time dateTime={n.publishedAt.toISOString()} className="text-sm text-muted-foreground">
+          <time dateTime={n.publishedAt.toISOString()} className="text-muted-foreground text-sm">
             {formatDate(n.publishedAt, { day: "numeric", month: "long", year: "numeric" })}
           </time>
         </div>
-        <h1 className="mt-4 text-h1 font-semibold">{n.title}</h1>
-        {n.summary ? <p className="mt-4 text-lead text-muted-foreground">{n.summary}</p> : null}
+        <h1 className="text-h1 mt-4 font-semibold">{n.title}</h1>
+        {n.summary ? <p className="text-lead text-muted-foreground mt-4">{n.summary}</p> : null}
       </header>
       <RichText html={n.body} className="mt-8" />
       {n.attachment || n.externalLink ? (
-        <div className="mt-10 flex flex-col gap-3 rounded-3xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="border-border bg-surface mt-10 flex flex-col gap-3 rounded-3xl border p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <FileText className="size-6 text-danger" aria-hidden />
+            <FileText className="text-danger size-6" aria-hidden />
             <span className="font-semibold">{n.attachment ? n.attachment.filename : "Related link"}</span>
           </div>
           <div className="flex gap-2">
@@ -64,7 +69,10 @@ export function NoticeArticle({ notice: n }: { notice: NoticeArticleData }) {
           </div>
         </div>
       ) : null}
-      <Link href="/notices" className="mt-10 inline-flex items-center gap-2 font-semibold text-primary hover:underline">
+      <Link
+        href="/notices"
+        className="text-primary mt-10 inline-flex items-center gap-2 font-semibold hover:underline"
+      >
         <ArrowLeft className="size-4" aria-hidden /> All notices
       </Link>
     </article>

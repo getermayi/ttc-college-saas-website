@@ -10,10 +10,21 @@ import { cn } from "@/lib/utils";
 export type LightboxImage = { media: MediaLite; caption?: string | null };
 
 /** Responsive photo grid with an accessible lightbox (keyboard arrows, swipe-friendly buttons). */
-export function LightboxGallery({ images, className, title }: { images: LightboxImage[]; className?: string; title: string }) {
+export function LightboxGallery({
+  images,
+  className,
+  title,
+}: {
+  images: LightboxImage[];
+  className?: string;
+  title: string;
+}) {
   const [index, setIndex] = useState<number | null>(null);
   const open = index !== null;
-  const go = useCallback((d: number) => setIndex((i) => (i === null ? i : (i + d + images.length) % images.length)), [images.length]);
+  const go = useCallback(
+    (d: number) => setIndex((i) => (i === null ? i : (i + d + images.length) % images.length)),
+    [images.length],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -35,7 +46,7 @@ export function LightboxGallery({ images, className, title }: { images: Lightbox
             <button
               type="button"
               onClick={() => setIndex(i)}
-              className="group relative block w-full overflow-hidden rounded-2xl bg-surface-2"
+              className="group bg-surface-2 relative block w-full overflow-hidden rounded-2xl"
               aria-label={`Open photo ${i + 1} of ${images.length}${img.caption ? `: ${img.caption}` : ""}`}
             >
               <Image
@@ -48,11 +59,13 @@ export function LightboxGallery({ images, className, title }: { images: Lightbox
                 blurDataURL={img.media.blurDataUrl ?? undefined}
                 className="h-auto w-full transition-transform duration-500 group-hover:scale-[1.03]"
               />
-              <span className="absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+              <span className="absolute top-2 right-2 grid size-8 place-items-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                 <Expand className="size-4" aria-hidden />
               </span>
               {img.caption ? (
-                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent p-3 pt-8 text-left text-sm text-white">{img.caption}</span>
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent p-3 pt-8 text-left text-sm text-white">
+                  {img.caption}
+                </span>
               ) : null}
             </button>
           </li>
@@ -62,30 +75,56 @@ export function LightboxGallery({ images, className, title }: { images: Lightbox
       <Dialog.Root open={open} onOpenChange={(o) => !o && setIndex(null)}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/90" />
-          <Dialog.Content className="fixed inset-0 z-50 flex flex-col focus:outline-none" aria-describedby={undefined}>
+          <Dialog.Content
+            className="fixed inset-0 z-50 flex flex-col focus:outline-none"
+            aria-describedby={undefined}
+          >
             <Dialog.Title className="sr-only">{title}</Dialog.Title>
             <div className="flex items-center justify-between p-3 text-white">
-              <span className="text-sm tabular-nums">{index !== null ? `${index + 1} / ${images.length}` : ""}</span>
-              <Dialog.Close className="grid size-11 place-items-center rounded-full hover:bg-white/10" aria-label="Close">
+              <span className="text-sm tabular-nums">
+                {index !== null ? `${index + 1} / ${images.length}` : ""}
+              </span>
+              <Dialog.Close
+                className="grid size-11 place-items-center rounded-full hover:bg-white/10"
+                aria-label="Close"
+              >
                 <X className="size-6" aria-hidden />
               </Dialog.Close>
             </div>
             <div className="relative flex-1">
               {current ? (
-                <Image src={current.media.url} alt={current.media.alt} fill sizes="100vw" className="object-contain" />
+                <Image
+                  src={current.media.url}
+                  alt={current.media.alt}
+                  fill
+                  sizes="100vw"
+                  className="object-contain"
+                />
               ) : null}
               {images.length > 1 ? (
                 <>
-                  <button type="button" onClick={() => go(-1)} aria-label="Previous photo" className="absolute left-2 top-1/2 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60">
+                  <button
+                    type="button"
+                    onClick={() => go(-1)}
+                    aria-label="Previous photo"
+                    className="absolute top-1/2 left-2 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60"
+                  >
                     <ChevronLeft className="size-6" aria-hidden />
                   </button>
-                  <button type="button" onClick={() => go(1)} aria-label="Next photo" className="absolute right-2 top-1/2 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60">
+                  <button
+                    type="button"
+                    onClick={() => go(1)}
+                    aria-label="Next photo"
+                    className="absolute top-1/2 right-2 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60"
+                  >
                     <ChevronRight className="size-6" aria-hidden />
                   </button>
                 </>
               ) : null}
             </div>
-            <p className="min-h-14 p-4 text-center text-sm text-white/85">{current?.caption ?? current?.media.alt}</p>
+            <p className="min-h-14 p-4 text-center text-sm text-white/85">
+              {current?.caption ?? current?.media.alt}
+            </p>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>

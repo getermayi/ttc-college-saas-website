@@ -65,20 +65,31 @@ function fieldSchema(f: FieldDef): z.ZodType {
         .union([z.string(), z.number(), z.null()])
         .optional()
         .superRefine((v, ctx) => {
-        const raw = str(v);
-        if (!raw) {
-          if (f.required) ctx.addIssue({ code: "custom", message: requiredMsg(f) });
-          return;
-        }
-        const n = Number(raw);
-        if (Number.isNaN(n)) return ctx.addIssue({ code: "custom", message: `${f.label} must be a number.` });
-        if (f.integer && !Number.isInteger(n)) ctx.addIssue({ code: "custom", message: `${f.label} must be a whole number.` });
-        if (f.min !== undefined && n < f.min) ctx.addIssue({ code: "custom", message: `${f.label} must be at least ${f.min}.` });
-        if (f.max !== undefined && n > f.max) ctx.addIssue({ code: "custom", message: `${f.label} must be at most ${f.max}.` });
+          const raw = str(v);
+          if (!raw) {
+            if (f.required) ctx.addIssue({ code: "custom", message: requiredMsg(f) });
+            return;
+          }
+          const n = Number(raw);
+          if (Number.isNaN(n))
+            return ctx.addIssue({ code: "custom", message: `${f.label} must be a number.` });
+          if (f.integer && !Number.isInteger(n))
+            ctx.addIssue({ code: "custom", message: `${f.label} must be a whole number.` });
+          if (f.min !== undefined && n < f.min)
+            ctx.addIssue({ code: "custom", message: `${f.label} must be at least ${f.min}.` });
+          if (f.max !== undefined && n > f.max)
+            ctx.addIssue({ code: "custom", message: `${f.label} must be at most ${f.max}.` });
         });
     }
     default: {
-      const max = f.type === "richtext" ? 200_000 : f.type === "textarea" ? (f.maxLength ?? 10_000) : "maxLength" in f && f.maxLength ? f.maxLength : 2000;
+      const max =
+        f.type === "richtext"
+          ? 200_000
+          : f.type === "textarea"
+            ? (f.maxLength ?? 10_000)
+            : "maxLength" in f && f.maxLength
+              ? f.maxLength
+              : 2000;
       return z
         .union([z.string(), z.null()])
         .optional()
@@ -91,11 +102,16 @@ function fieldSchema(f: FieldDef): z.ZodType {
           }
           if (raw.length > max) ctx.addIssue({ code: "custom", message: `${f.label} is too long.` });
           if (f.type === "url" && !/^(https?:\/\/|\/|mailto:|tel:|#)/.test(raw))
-            ctx.addIssue({ code: "custom", message: "Enter a full URL (https://…) or a site path starting with /." });
-          if (f.type === "email" && !/^\S+@\S+\.\S+$/.test(raw)) ctx.addIssue({ code: "custom", message: "Enter a valid email." });
+            ctx.addIssue({
+              code: "custom",
+              message: "Enter a full URL (https://…) or a site path starting with /.",
+            });
+          if (f.type === "email" && !/^\S+@\S+\.\S+$/.test(raw))
+            ctx.addIssue({ code: "custom", message: "Enter a valid email." });
           if (f.type === "slug" && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(raw))
             ctx.addIssue({ code: "custom", message: "Use lowercase letters, numbers and dashes only." });
-          if (f.type === "color" && !/^#[0-9a-fA-F]{6}$/.test(raw)) ctx.addIssue({ code: "custom", message: "Use a hex colour like #1f4d3a." });
+          if (f.type === "color" && !/^#[0-9a-fA-F]{6}$/.test(raw))
+            ctx.addIssue({ code: "custom", message: "Use a hex colour like #1f4d3a." });
           if (f.type === "select" && !f.options.some((o) => o.value === raw))
             ctx.addIssue({ code: "custom", message: `Choose a valid ${f.label.toLowerCase()}.` });
         });
@@ -133,7 +149,9 @@ export function toFormValues(fields: FieldDef[], record: Record<string, unknown>
         out[f.name] = Array.isArray(v) ? v : [];
         break;
       case "repeater":
-        out[f.name] = Array.isArray(v) ? v.map((item) => toFormValues(f.fields, item as Record<string, unknown>)) : [];
+        out[f.name] = Array.isArray(v)
+          ? v.map((item) => toFormValues(f.fields, item as Record<string, unknown>))
+          : [];
         break;
       case "date":
       case "datetime":
@@ -150,7 +168,11 @@ export function toFormValues(fields: FieldDef[], record: Record<string, unknown>
 }
 
 /** Form values → database data (assumes values already validated). */
-export function toDbData(fields: FieldDef[], values: FormValues, opts: { sanitize?: (html: string) => string } = {}) {
+export function toDbData(
+  fields: FieldDef[],
+  values: FormValues,
+  opts: { sanitize?: (html: string) => string } = {},
+) {
   const data: Record<string, unknown> = {};
   for (const f of fields) {
     const v = values[f.name];
@@ -165,7 +187,13 @@ export function toDbData(fields: FieldDef[], values: FormValues, opts: { sanitiz
         const items = (Array.isArray(v) ? v : []).map((item) => toDbData(f.fields, item as FormValues, opts));
         // Drop completely empty rows.
         data[f.name] = items
-          .map((item) => Object.fromEntries(Object.entries(item).filter(([, val]) => val !== null && val !== "" && !(Array.isArray(val) && !val.length))))
+          .map((item) =>
+            Object.fromEntries(
+              Object.entries(item).filter(
+                ([, val]) => val !== null && val !== "" && !(Array.isArray(val) && !val.length),
+              ),
+            ),
+          )
           .filter((item) => Object.keys(item).length > 0);
         break;
       }

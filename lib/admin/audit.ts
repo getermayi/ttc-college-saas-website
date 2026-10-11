@@ -12,16 +12,26 @@ export async function audit(
   meta?: Prisma.InputJsonValue,
 ) {
   try {
-    await prisma.auditLog.create({ data: { userId: user?.id ?? null, action, entityType, entityId, summary: summary.slice(0, 500), meta } });
+    await prisma.auditLog.create({
+      data: { userId: user?.id ?? null, action, entityType, entityId, summary: summary.slice(0, 500), meta },
+    });
   } catch (err) {
     console.error("[audit] failed", err);
   }
 }
 
 /** Stores a snapshot of a record before it changes, for version history and restore. */
-export async function snapshot(user: Pick<CurrentUser, "id"> | null, entityType: string, entityId: string, data: unknown, note?: string) {
+export async function snapshot(
+  user: Pick<CurrentUser, "id"> | null,
+  entityType: string,
+  entityId: string,
+  data: unknown,
+  note?: string,
+) {
   const json = JSON.parse(JSON.stringify(data)) as Prisma.InputJsonValue;
-  await prisma.contentVersion.create({ data: { entityType, entityId, data: json, note, userId: user?.id ?? null } });
+  await prisma.contentVersion.create({
+    data: { entityType, entityId, data: json, note, userId: user?.id ?? null },
+  });
   // Keep the newest 30 versions per record.
   const old = await prisma.contentVersion.findMany({
     where: { entityType, entityId },

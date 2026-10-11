@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getNotice, getNotices } from "@/lib/data/public";
 import { buildMetadata } from "@/lib/seo";
+import { atLeastOne } from "@/lib/utils";
 import { stripHtml, truncate } from "@/lib/utils";
 import { NoticeArticle } from "@/components/site/notice-article";
 
@@ -10,7 +11,10 @@ export const instant = false;
 
 export async function generateStaticParams() {
   const notices = await getNotices();
-  return notices.slice(0, 50).map((n) => ({ slug: n.slug }));
+  return atLeastOne(
+    notices.slice(0, 50).map((n) => ({ slug: n.slug })),
+    "slug",
+  );
 }
 
 export async function generateMetadata({ params }: PageProps<"/notices/[slug]">): Promise<Metadata> {

@@ -10,7 +10,10 @@ export default async function AccountPage() {
   const user = await requireUser();
   return (
     <>
-      <AdminPageHeader title="Your account" description={`${user.name} · ${user.email} · ${ROLE_LABELS[user.role]}`} />
+      <AdminPageHeader
+        title="Your account"
+        description={`${user.name} · ${user.email} · ${ROLE_LABELS[user.role]}`}
+      />
       <AccountForm />
     </>
   );

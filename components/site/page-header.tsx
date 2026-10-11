@@ -12,18 +12,21 @@ export function Breadcrumbs({ items, className }: { items: Crumb[]; className?: 
   return (
     <>
       <nav aria-label="Breadcrumb" className={cn("text-sm", className)}>
-        <ol className="flex flex-wrap items-center gap-1 text-muted-foreground">
+        <ol className="text-muted-foreground flex flex-wrap items-center gap-1">
           {all.map((c, i) => {
             const last = i === all.length - 1;
             return (
               <li key={c.href} className="flex items-center gap-1">
                 {i > 0 ? <ChevronRight className="size-3.5 opacity-60" aria-hidden /> : null}
                 {last ? (
-                  <span aria-current="page" className="font-medium text-foreground">
+                  <span aria-current="page" className="text-foreground font-medium">
                     {c.name}
                   </span>
                 ) : (
-                  <Link href={c.href} className="inline-flex items-center gap-1 rounded hover:text-foreground">
+                  <Link
+                    href={c.href}
+                    className="hover:text-foreground inline-flex items-center gap-1 rounded"
+                  >
                     {i === 0 ? <Home className="size-3.5" aria-hidden /> : null}
                     {c.name}
                   </Link>
@@ -55,14 +58,19 @@ export function PageHeader({
 }) {
   return (
     <section className={cn("relative overflow-hidden", className)}>
-      <div className="motif-texture absolute inset-0 [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_70%)]" aria-hidden />
-      <MotifDiamond className="absolute -right-6 top-10 hidden size-56 text-primary/10 md:block" />
-      <div className="container-page relative pb-12 pt-6 md:pb-16 md:pt-10">
+      <div
+        className="motif-texture absolute inset-0 [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_70%)]"
+        aria-hidden
+      />
+      <MotifDiamond className="text-primary/10 absolute top-10 -right-6 hidden size-56 md:block" />
+      <div className="container-page relative pt-6 pb-12 md:pt-10 md:pb-16">
         <Breadcrumbs items={crumbs} />
         <div className="mt-8 max-w-3xl md:mt-12">
           {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-          <h1 className="mt-3 text-h1 font-semibold text-balance-pretty">{title}</h1>
-          {description ? <p className="mt-5 max-w-2xl text-lead text-muted-foreground">{description}</p> : null}
+          <h1 className="text-h1 text-balance-pretty mt-3 font-semibold">{title}</h1>
+          {description ? (
+            <p className="text-lead text-muted-foreground mt-5 max-w-2xl">{description}</p>
+          ) : null}
           {children ? <div className="mt-8">{children}</div> : null}
         </div>
       </div>
@@ -97,10 +105,10 @@ export function SectionHeading({
     >
       <div className={cn("max-w-2xl", align === "center" && "mx-auto")}>
         {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-        <h2 id={id} className="mt-3 text-h2 font-semibold text-balance-pretty">
+        <h2 id={id} className="text-h2 text-balance-pretty mt-3 font-semibold">
           {title}
         </h2>
-        {description ? <p className="mt-4 text-lead text-muted-foreground">{description}</p> : null}
+        {description ? <p className="text-lead text-muted-foreground mt-4">{description}</p> : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>
@@ -121,10 +129,19 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-center rounded-3xl border border-dashed border-border-strong bg-surface/60 px-6 py-14 text-center", className)}>
-      {icon ? <div className="mb-4 grid size-14 place-items-center rounded-2xl bg-primary-soft text-primary-soft-foreground [&_svg]:size-6">{icon}</div> : null}
+    <div
+      className={cn(
+        "border-border-strong bg-surface/60 flex flex-col items-center rounded-3xl border border-dashed px-6 py-14 text-center",
+        className,
+      )}
+    >
+      {icon ? (
+        <div className="bg-primary-soft text-primary-soft-foreground mb-4 grid size-14 place-items-center rounded-2xl [&_svg]:size-6">
+          {icon}
+        </div>
+      ) : null}
       <h3 className="font-sans text-lg font-semibold">{title}</h3>
-      {description ? <p className="mt-2 max-w-md text-muted-foreground">{description}</p> : null}
+      {description ? <p className="text-muted-foreground mt-2 max-w-md">{description}</p> : null}
       {action ? <div className="mt-6">{action}</div> : null}
     </div>
   );

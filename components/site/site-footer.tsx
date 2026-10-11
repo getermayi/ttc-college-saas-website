@@ -29,9 +29,13 @@ export function SiteFooter({ settings: s, nav }: { settings: Settings; nav: Navi
         <div className="container-page grid gap-12 py-16 md:grid-cols-12">
           <div className="md:col-span-5">
             <Logo name={s.siteName} shortName={s.shortName} logo={s.logo} inverted />
-            {s.footerAbout ? <p className="mt-5 max-w-md text-[0.95rem] leading-relaxed text-[#c9d6cd]">{s.footerAbout}</p> : null}
+            {s.footerAbout ? (
+              <p className="mt-5 max-w-md text-[0.95rem] leading-relaxed text-[#c9d6cd]">{s.footerAbout}</p>
+            ) : null}
             <ul className="mt-6 flex flex-wrap gap-2 text-xs font-semibold">
-              <li className="rounded-full border border-white/15 px-3 py-1">{s.affiliation.replace(/^Affiliated to /, "Affiliated: ")}</li>
+              <li className="rounded-full border border-white/15 px-3 py-1">
+                {s.affiliation.replace(/^Affiliated to /, "Affiliated: ")}
+              </li>
               <li className="rounded-full border border-white/15 px-3 py-1">{s.recognition}</li>
             </ul>
             {socials.length ? (
@@ -56,11 +60,17 @@ export function SiteFooter({ settings: s, nav }: { settings: Settings; nav: Navi
           {columns.map((col) =>
             col.items.length ? (
               <nav key={col.title} aria-label={col.title} className="md:col-span-2">
-                <h2 className="font-sans text-sm font-semibold uppercase tracking-[0.14em] text-[#f0b597]">{col.title}</h2>
+                <h2 className="font-sans text-sm font-semibold tracking-[0.14em] text-[#f0b597] uppercase">
+                  {col.title}
+                </h2>
                 <ul className="mt-4 space-y-2.5">
                   {col.items.map((item) => (
                     <li key={item.id}>
-                      <Link href={item.href} target={item.newTab ? "_blank" : undefined} className="text-[0.95rem] text-[#c9d6cd] transition-colors hover:text-white">
+                      <Link
+                        href={item.href}
+                        target={item.newTab ? "_blank" : undefined}
+                        className="text-[0.95rem] text-[#c9d6cd] transition-colors hover:text-white"
+                      >
                         {item.label}
                       </Link>
                     </li>
@@ -71,8 +81,10 @@ export function SiteFooter({ settings: s, nav }: { settings: Settings; nav: Navi
           )}
 
           <div className="md:col-span-3">
-            <h2 className="font-sans text-sm font-semibold uppercase tracking-[0.14em] text-[#f0b597]">Visit or call</h2>
-            <address className="mt-4 space-y-3 text-[0.95rem] not-italic text-[#c9d6cd]">
+            <h2 className="font-sans text-sm font-semibold tracking-[0.14em] text-[#f0b597] uppercase">
+              Visit or call
+            </h2>
+            <address className="mt-4 space-y-3 text-[0.95rem] text-[#c9d6cd] not-italic">
               <p className="flex gap-3">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-[#f0b597]" aria-hidden />
                 <span>
@@ -110,7 +122,9 @@ export function SiteFooter({ settings: s, nav }: { settings: Settings; nav: Navi
           <div className="container-page flex flex-col gap-3 py-6 text-sm text-[#a9b9ae] md:flex-row md:items-center md:justify-between">
             <p>
               © <FooterYear /> {s.siteName}. Managed by {s.managedBy}.
-              {s.footerNote ? <span className="block md:inline md:before:content-['_·_']">{s.footerNote}</span> : null}
+              {s.footerNote ? (
+                <span className="block md:inline md:before:content-['_·_']">{s.footerNote}</span>
+              ) : null}
             </p>
             <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
               {nav.legal.map((item) => (

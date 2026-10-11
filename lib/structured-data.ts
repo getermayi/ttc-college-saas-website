@@ -78,7 +78,15 @@ export function courseJsonLd(
 }
 
 export function eventJsonLd(
-  e: { title: string; summary: string; slug: string; startsAt: Date; endsAt: Date | null; location: string | null; cover?: { url: string } | null },
+  e: {
+    title: string;
+    summary: string;
+    slug: string;
+    startsAt: Date;
+    endsAt: Date | null;
+    location: string | null;
+    cover?: { url: string } | null;
+  },
   s: Settings,
 ) {
   return {
@@ -95,7 +103,13 @@ export function eventJsonLd(
     location: {
       "@type": "Place",
       name: e.location || s.siteName,
-      address: { "@type": "PostalAddress", addressLocality: s.city, addressRegion: s.state, postalCode: s.postalCode, addressCountry: "IN" },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: s.city,
+        addressRegion: s.state,
+        postalCode: s.postalCode,
+        addressCountry: "IN",
+      },
     },
     organizer: { "@type": "Organization", name: s.siteName, url: absoluteUrl("/") },
   };

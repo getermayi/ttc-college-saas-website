@@ -36,9 +36,8 @@ export function SiteHeader({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => setOpen(false), [pathname]);
-
-  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <header
@@ -68,8 +67,8 @@ export function SiteHeader({
                   target={item.newTab ? "_blank" : undefined}
                   aria-current={isActive(item.href) ? "page" : undefined}
                   className={cn(
-                    "relative rounded-full px-3.5 py-2 text-[0.93rem] font-medium text-foreground/80 transition-colors hover:bg-surface-2 hover:text-foreground",
-                    "aria-[current=page]:text-foreground aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-3.5 aria-[current=page]:after:-bottom-0.5 aria-[current=page]:after:h-0.5 aria-[current=page]:after:rounded-full aria-[current=page]:after:bg-accent",
+                    "text-foreground/80 hover:bg-surface-2 hover:text-foreground relative rounded-full px-3.5 py-2 text-[0.93rem] font-medium transition-colors",
+                    "aria-[current=page]:text-foreground aria-[current=page]:after:bg-accent aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-3.5 aria-[current=page]:after:-bottom-0.5 aria-[current=page]:after:h-0.5 aria-[current=page]:after:rounded-full",
                   )}
                 >
                   {item.label}
@@ -84,9 +83,9 @@ export function SiteHeader({
           {phone ? (
             <a
               href={telLink(phone) ?? undefined}
-              className="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-foreground hover:bg-surface-2 xl:inline-flex"
+              className="text-foreground hover:bg-surface-2 hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold xl:inline-flex"
             >
-              <Phone className="size-4 text-primary" aria-hidden />
+              <Phone className="text-primary size-4" aria-hidden />
               {phone}
             </a>
           ) : null}
@@ -101,32 +100,43 @@ export function SiteHeader({
             <Dialog.Trigger asChild>
               <button
                 type="button"
-                className="grid size-11 place-items-center rounded-full border border-border bg-surface text-foreground shadow-[var(--shadow-soft)] lg:hidden"
+                className="border-border bg-surface text-foreground grid size-11 place-items-center rounded-full border shadow-[var(--shadow-soft)] lg:hidden"
                 aria-label="Open menu"
               >
                 <Menu className="size-5" aria-hidden />
               </button>
             </Dialog.Trigger>
             <SheetContent side="right" title="Menu" className="p-0">
-              <div className="flex h-16 items-center justify-between border-b border-border px-5">
+              <div className="border-border flex h-16 items-center justify-between border-b px-5">
                 <span className="font-display text-lg font-semibold">Menu</span>
                 <div className="flex items-center gap-1">
                   <ThemeToggle />
-                  <Dialog.Close className="grid size-10 place-items-center rounded-full hover:bg-surface-2" aria-label="Close menu">
+                  <Dialog.Close
+                    className="hover:bg-surface-2 grid size-10 place-items-center rounded-full"
+                    aria-label="Close menu"
+                  >
                     <X className="size-5" aria-hidden />
                   </Dialog.Close>
                 </div>
               </div>
               {admissionsOpen && admissionsBadge ? (
-                <div className="mx-5 mt-5 rounded-2xl bg-primary-soft px-4 py-3 text-sm font-semibold text-primary-soft-foreground">
-                  <span className="mr-2 inline-block size-2 animate-pulse rounded-full bg-success align-middle" aria-hidden />
+                <div className="bg-primary-soft text-primary-soft-foreground mx-5 mt-5 rounded-2xl px-4 py-3 text-sm font-semibold">
+                  <span
+                    className="bg-success mr-2 inline-block size-2 animate-pulse rounded-full align-middle"
+                    aria-hidden
+                  />
                   {admissionsBadge}
                 </div>
               ) : null}
               <nav aria-label="Mobile" className="px-3 py-4">
                 <ul className="flex flex-col">
                   <li>
-                    <Link href="/" className="flex items-center justify-between rounded-xl px-3 py-3.5 text-lg font-medium hover:bg-surface-2" aria-current={pathname === "/" ? "page" : undefined}>
+                    <Link
+                      href="/"
+                      onClick={() => setOpen(false)}
+                      className="hover:bg-surface-2 flex items-center justify-between rounded-xl px-3 py-3.5 text-lg font-medium"
+                      aria-current={pathname === "/" ? "page" : undefined}
+                    >
                       Home
                     </Link>
                   </li>
@@ -135,19 +145,22 @@ export function SiteHeader({
                       <Link
                         href={item.href}
                         target={item.newTab ? "_blank" : undefined}
+                        onClick={() => setOpen(false)}
                         aria-current={isActive(item.href) ? "page" : undefined}
-                        className="flex items-center justify-between rounded-xl px-3 py-3.5 text-lg font-medium hover:bg-surface-2 aria-[current=page]:bg-surface-2 aria-[current=page]:text-primary"
+                        className="hover:bg-surface-2 aria-[current=page]:bg-surface-2 aria-[current=page]:text-primary flex items-center justify-between rounded-xl px-3 py-3.5 text-lg font-medium"
                       >
                         {item.label}
-                        <ArrowRight className="size-4 text-muted-foreground" aria-hidden />
+                        <ArrowRight className="text-muted-foreground size-4" aria-hidden />
                       </Link>
                     </li>
                   ))}
                 </ul>
               </nav>
-              <div className="mt-auto grid gap-2 border-t border-border p-5">
+              <div className="border-border mt-auto grid gap-2 border-t p-5">
                 <Button asChild variant="accent" size="lg">
-                  <Link href="/enquire">Check eligibility & enquire</Link>
+                  <Link href="/enquire" onClick={() => setOpen(false)}>
+                    Check eligibility & enquire
+                  </Link>
                 </Button>
                 {phone ? (
                   <Button asChild variant="outline" size="lg">

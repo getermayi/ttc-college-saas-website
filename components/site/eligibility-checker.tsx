@@ -13,10 +13,22 @@ import { cn } from "@/lib/utils";
 import { EnquiryForm, type EnquiryPrefill } from "./enquiry-form";
 
 const TONES: Record<EligibilityResult["status"], { box: string; icon: React.ReactNode }> = {
-  eligible: { box: "border-success/30 bg-success-soft text-success-soft-foreground", icon: <CircleCheck className="size-6" aria-hidden /> },
-  likely: { box: "border-info/30 bg-info-soft text-info-soft-foreground", icon: <Sparkles className="size-6" aria-hidden /> },
-  "not-eligible": { box: "border-warning/30 bg-warning-soft text-warning-soft-foreground", icon: <CircleAlert className="size-6" aria-hidden /> },
-  unknown: { box: "border-border bg-surface-2 text-foreground", icon: <HelpCircle className="size-6" aria-hidden /> },
+  eligible: {
+    box: "border-success/30 bg-success-soft text-success-soft-foreground",
+    icon: <CircleCheck className="size-6" aria-hidden />,
+  },
+  likely: {
+    box: "border-info/30 bg-info-soft text-info-soft-foreground",
+    icon: <Sparkles className="size-6" aria-hidden />,
+  },
+  "not-eligible": {
+    box: "border-warning/30 bg-warning-soft text-warning-soft-foreground",
+    icon: <CircleAlert className="size-6" aria-hidden />,
+  },
+  unknown: {
+    box: "border-border bg-surface-2 text-foreground",
+    icon: <HelpCircle className="size-6" aria-hidden />,
+  },
 };
 
 export function EligibilityAndEnquiry({
@@ -59,7 +71,11 @@ export function EligibilityAndEnquiry({
       return;
     }
     setError(null);
-    const r = checkEligibility(programme.eligibilityRules, { qualification, percentage: pct, category, inService, otherUniversity }, programme.shortName);
+    const r = checkEligibility(
+      programme.eligibilityRules,
+      { qualification, percentage: pct, category, inService, otherUniversity },
+      programme.shortName,
+    );
     setResult(r);
     setPrefill({ programmeId, qualification, category, percentage: pct ?? undefined });
     requestAnimationFrame(() => document.getElementById(`${uid}-result`)?.focus());
@@ -79,7 +95,11 @@ export function EligibilityAndEnquiry({
       <form onSubmit={check} className="grid gap-5" aria-label="Eligibility checker" noValidate>
         {config.length > 1 ? (
           <Field id={`${uid}-programme`} label="Which programme?" required>
-            <NativeSelect id={`${uid}-programme`} value={programmeId} onChange={(e) => setProgrammeId(e.target.value)}>
+            <NativeSelect
+              id={`${uid}-programme`}
+              value={programmeId}
+              onChange={(e) => setProgrammeId(e.target.value)}
+            >
               {config.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
@@ -90,7 +110,11 @@ export function EligibilityAndEnquiry({
         ) : null}
         <div className="grid gap-5 sm:grid-cols-2">
           <Field id={`${uid}-qual`} label="1. Your highest qualification" required>
-            <NativeSelect id={`${uid}-qual`} value={qualification} onChange={(e) => setQualification(e.target.value)}>
+            <NativeSelect
+              id={`${uid}-qual`}
+              value={qualification}
+              onChange={(e) => setQualification(e.target.value)}
+            >
               <option value="">Choose one</option>
               {QUALIFICATIONS.map((q) => (
                 <option key={q.value} value={q.value}>
@@ -116,7 +140,10 @@ export function EligibilityAndEnquiry({
         </div>
         <fieldset>
           <legend className="text-sm font-semibold">
-            3. Your category <span className="text-accent" aria-hidden>*</span>
+            3. Your category{" "}
+            <span className="text-accent" aria-hidden>
+              *
+            </span>
           </legend>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {CATEGORIES.map((c) => (
@@ -124,28 +151,51 @@ export function EligibilityAndEnquiry({
                 key={c}
                 className={cn(
                   "flex cursor-pointer items-center justify-center rounded-xl border px-3 py-3 text-center text-sm font-semibold transition-colors",
-                  category === c ? "border-primary bg-primary text-primary-foreground" : "border-border-strong bg-surface hover:border-primary/60",
-                  "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring",
+                  category === c
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border-strong bg-surface hover:border-primary/60",
+                  "has-[:focus-visible]:outline-ring has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2",
                 )}
               >
-                <input type="radio" name={`${uid}-cat`} value={c} checked={category === c} onChange={() => setCategory(c)} className="sr-only" />
+                <input
+                  type="radio"
+                  name={`${uid}-cat`}
+                  value={c}
+                  checked={category === c}
+                  onChange={() => setCategory(c)}
+                  className="sr-only"
+                />
                 {CATEGORY_LABELS[c]}
               </label>
             ))}
           </div>
         </fieldset>
         <div className="grid gap-3 sm:grid-cols-2">
-          <label htmlFor={`${uid}-inservice`} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm">
-            <Checkbox id={`${uid}-inservice`} checked={inService} onCheckedChange={(v) => setInService(v === true)} />
+          <label
+            htmlFor={`${uid}-inservice`}
+            className="border-border bg-surface flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm"
+          >
+            <Checkbox
+              id={`${uid}-inservice`}
+              checked={inService}
+              onCheckedChange={(v) => setInService(v === true)}
+            />
             I am an in-service teacher
           </label>
-          <label htmlFor={`${uid}-otheruni`} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm">
-            <Checkbox id={`${uid}-otheruni`} checked={otherUniversity} onCheckedChange={(v) => setOtherUniversity(v === true)} />
+          <label
+            htmlFor={`${uid}-otheruni`}
+            className="border-border bg-surface flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm"
+          >
+            <Checkbox
+              id={`${uid}-otheruni`}
+              checked={otherUniversity}
+              onCheckedChange={(v) => setOtherUniversity(v === true)}
+            />
             My degree is not from RGU
           </label>
         </div>
         {error ? (
-          <p role="alert" className="text-sm font-medium text-danger">
+          <p role="alert" className="text-danger text-sm font-medium">
             {error}
           </p>
         ) : null}
@@ -166,7 +216,10 @@ export function EligibilityAndEnquiry({
           <div
             id={`${uid}-result`}
             tabIndex={-1}
-            className={cn("animate-fade-up rounded-3xl border p-6 outline-none md:p-8", TONES[result.status].box)}
+            className={cn(
+              "animate-fade-up rounded-3xl border p-6 outline-none md:p-8",
+              TONES[result.status].box,
+            )}
           >
             <div className="flex items-start gap-3">
               {TONES[result.status].icon}
@@ -192,15 +245,23 @@ export function EligibilityAndEnquiry({
                 </a>
               </Button>
             ) : null}
-            <p className="mt-4 text-xs opacity-80">This is a guide only. Final eligibility is confirmed by the college as per university and NCTE rules.</p>
+            <p className="mt-4 text-xs opacity-80">
+              This is a guide only. Final eligibility is confirmed by the college as per university and NCTE
+              rules.
+            </p>
           </div>
         ) : null}
       </div>
 
       {showForm ? (
-        <div id={`${uid}-enquiry`} className="scroll-mt-28 rounded-3xl border border-border bg-surface p-5 shadow-[var(--shadow-soft)] sm:p-8">
+        <div
+          id={`${uid}-enquiry`}
+          className="border-border bg-surface scroll-mt-28 rounded-3xl border p-5 shadow-[var(--shadow-soft)] sm:p-8"
+        >
           <h3 className="font-display text-2xl font-semibold">{formTitle}</h3>
-          <p className="mt-1.5 text-muted-foreground">Share a few details. Our admissions team will call you back.</p>
+          <p className="text-muted-foreground mt-1.5">
+            Share a few details. Our admissions team will call you back.
+          </p>
           <EnquiryForm
             className="mt-6"
             programmes={config.map((p) => ({ id: p.id, name: p.name, shortName: p.shortName }))}

@@ -24,14 +24,25 @@ import {
   type FormState,
   type GrievanceInput,
 } from "@/lib/validation/enquiry";
-import { EnquiryAutoReplyEmail, EnquiryNotificationEmail, GrievanceNotificationEmail, GrievanceReceiptEmail } from "@/emails/enquiry-emails";
+import {
+  EnquiryAutoReplyEmail,
+  EnquiryNotificationEmail,
+  GrievanceNotificationEmail,
+  GrievanceReceiptEmail,
+} from "@/emails/enquiry-emails";
 
 const GENERIC_ERROR = "Something went wrong on our side. Please try again, or call or WhatsApp us.";
 
-export async function submitEnquiry(input: EnquiryInput): Promise<FormState<{ firstName: string; programme: string }>> {
+export async function submitEnquiry(
+  input: EnquiryInput,
+): Promise<FormState<{ firstName: string; programme: string }>> {
   const parsed = enquirySchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, message: "Please check the highlighted fields.", fieldErrors: zodFieldErrors(parsed.error) };
+    return {
+      ok: false,
+      message: "Please check the highlighted fields.",
+      fieldErrors: zodFieldErrors(parsed.error),
+    };
   }
   const data = parsed.data;
   // Honeypot filled → silently pretend success to bots.
@@ -40,10 +51,16 @@ export async function submitEnquiry(input: EnquiryInput): Promise<FormState<{ fi
   const client = await getClientInfo();
   const limit = await rateLimit(`enquiry:${client.ipHash}`, { limit: 5, windowSeconds: 3600 });
   if (!limit.success) {
-    return { ok: false, message: "You've sent several enquiries already. Please wait a little, or call us directly." };
+    return {
+      ok: false,
+      message: "You've sent several enquiries already. Please wait a little, or call us directly.",
+    };
   }
   if (!(await verifyTurnstile(data.turnstileToken, client.ip))) {
-    return { ok: false, message: "We couldn't confirm you're human. Please complete the check and try again." };
+    return {
+      ok: false,
+      message: "We couldn't confirm you're human. Please complete the check and try again.",
+    };
   }
 
   try {
@@ -51,7 +68,12 @@ export async function submitEnquiry(input: EnquiryInput): Promise<FormState<{ fi
       where: { id: data.programmeId, status: "ACTIVE" },
       select: { id: true, name: true, shortName: true },
     });
-    if (!programme) return { ok: false, message: "Please choose a programme.", fieldErrors: { programmeId: "Please choose a programme." } };
+    if (!programme)
+      return {
+        ok: false,
+        message: "Please choose a programme.",
+        fieldErrors: { programmeId: "Please choose a programme." },
+      };
 
     const phone = normaliseIndianPhone(data.phone)!;
     const now = new Date();
@@ -81,7 +103,12 @@ export async function submitEnquiry(input: EnquiryInput): Promise<FormState<{ fi
         referrer: data.referrer,
         landingPage: data.landingPage,
         userAgent: client.userAgent,
-        activities: { create: { type: "SYSTEM", body: `Enquiry received via the website (${data.formName ?? "enquiry"} form).` } },
+        activities: {
+          create: {
+            type: "SYSTEM",
+            body: `Enquiry received via the website (${data.formName ?? "enquiry"} form).`,
+          },
+        },
       },
     });
 
@@ -104,7 +131,11 @@ export async function submitEnquiry(input: EnquiryInput): Promise<FormState<{ fi
       await sendEmail({
         to: adminRecipients(settings),
         subject: `New enquiry: ${data.name} — ${programme.shortName}`,
-        react: EnquiryNotificationEmail({ rows, adminUrl: absoluteUrl(`/admin/leads/${lead.id}`), name: data.name }),
+        react: EnquiryNotificationEmail({
+          rows,
+          adminUrl: absoluteUrl(`/admin/leads/${lead.id}`),
+          name: data.name,
+        }),
         replyTo: data.email,
       });
       if (data.email) {
@@ -140,7 +171,11 @@ async function nextTicket() {
 export async function submitGrievance(input: GrievanceInput): Promise<FormState<{ ticket: string }>> {
   const parsed = grievanceSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, message: "Please check the highlighted fields.", fieldErrors: zodFieldErrors(parsed.error) };
+    return {
+      ok: false,
+      message: "Please check the highlighted fields.",
+      fieldErrors: zodFieldErrors(parsed.error),
+    };
   }
   const data = parsed.data;
   if (data.website) return { ok: true, data: { ticket: "" } };
@@ -149,7 +184,10 @@ export async function submitGrievance(input: GrievanceInput): Promise<FormState<
   const limit = await rateLimit(`grievance:${client.ipHash}`, { limit: 3, windowSeconds: 3600 });
   if (!limit.success) return { ok: false, message: "Too many submissions. Please try again later." };
   if (!(await verifyTurnstile(data.turnstileToken, client.ip))) {
-    return { ok: false, message: "We couldn't confirm you're human. Please complete the check and try again." };
+    return {
+      ok: false,
+      message: "We couldn't confirm you're human. Please complete the check and try again.",
+    };
   }
 
   try {
@@ -172,7 +210,10 @@ export async function submitGrievance(input: GrievanceInput): Promise<FormState<
     after(async () => {
       const settings = await getSettings();
       await sendEmail({
-        to: adminRecipients({ admissionsEmail: process.env.GRIEVANCE_NOTIFY_EMAIL ?? null, email: settings.email }),
+        to: adminRecipients({
+          admissionsEmail: process.env.GRIEVANCE_NOTIFY_EMAIL ?? null,
+          email: settings.email,
+        }),
         subject: `New grievance ${ticket}: ${data.subject}`,
         react: GrievanceNotificationEmail({
           ticket,

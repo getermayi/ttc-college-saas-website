@@ -24,8 +24,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
           <span className="font-display text-2xl font-semibold">TTC Aalo</span>
         </div>
         <div className="relative">
-          <p className="font-display text-5xl font-semibold leading-tight">Every change here reaches a future teacher.</p>
-          <p className="mt-4 max-w-md text-[#c9d6cd]">Update notices, answer enquiries and keep the website accurate — changes go live instantly.</p>
+          <p className="font-display text-5xl leading-tight font-semibold">
+            Every change here reaches a future teacher.
+          </p>
+          <p className="mt-4 max-w-md text-[#c9d6cd]">
+            Update notices, answer enquiries and keep the website accurate — changes go live instantly.
+          </p>
         </div>
         <MotifBand tone="accent" className="relative opacity-70" />
       </div>
@@ -35,9 +39,19 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
             <Emblem className="size-10" />
             <span className="font-display text-xl font-semibold">TTC Aalo</span>
           </div>
-          <h1 className="mt-8 font-display text-3xl font-semibold lg:mt-0">Staff sign in</h1>
-          <p className="mt-2 text-muted-foreground">Use the email your administrator invited.</p>
-          <LoginForm callbackUrl={callbackUrl} googleEnabled={googleEnabled} initialError={error === "NotInvited" ? "That Google account hasn't been invited. Ask an admin to invite you." : error ? "Sign-in failed. Please try again." : null} />
+          <h1 className="font-display mt-8 text-3xl font-semibold lg:mt-0">Staff sign in</h1>
+          <p className="text-muted-foreground mt-2">Use the email your administrator invited.</p>
+          <LoginForm
+            callbackUrl={callbackUrl}
+            googleEnabled={googleEnabled}
+            initialError={
+              error === "NotInvited"
+                ? "That Google account hasn't been invited. Ask an admin to invite you."
+                : error
+                  ? "Sign-in failed. Please try again."
+                  : null
+            }
+          />
         </div>
       </div>
     </main>

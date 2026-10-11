@@ -11,11 +11,15 @@ type Finder = {
 };
 const db = (config: ResourceConfig) => (prisma as unknown as Record<string, Finder>)[config.model];
 
-export async function listRecords(config: ResourceConfig, opts: { q?: string; status?: string; group?: string }) {
+export async function listRecords(
+  config: ResourceConfig,
+  opts: { q?: string; status?: string; group?: string },
+) {
   const where: Record<string, unknown> = {};
   if (opts.q) where.OR = config.searchFields.map((f) => ({ [f]: { contains: opts.q, mode: "insensitive" } }));
   if (opts.status && config.status) where[config.status.field] = opts.status;
-  if (opts.group && config.groupBy && config.groupBy.options.some((o) => o.value === opts.group)) where[config.groupBy.field] = opts.group;
+  if (opts.group && config.groupBy && config.groupBy.options.some((o) => o.value === opts.group))
+    where[config.groupBy.field] = opts.group;
   const [rows, total] = await Promise.all([
     db(config).findMany({ where, orderBy: config.orderBy, include: config.include, take: 500 }),
     db(config).count({ where }),
@@ -27,12 +31,17 @@ function collectMediaIds(fields: FieldDef[], record: Record<string, unknown>, ou
   for (const f of fields) {
     const v = record[f.name];
     if ((f.type === "image" || f.type === "file") && typeof v === "string" && v) out.add(v);
-    if (f.type === "repeater" && Array.isArray(v)) for (const item of v) collectMediaIds(f.fields, item as Record<string, unknown>, out);
+    if (f.type === "repeater" && Array.isArray(v))
+      for (const item of v) collectMediaIds(f.fields, item as Record<string, unknown>, out);
   }
 }
 
 function needsRelation(fields: FieldDef[], rel: string): boolean {
-  return fields.some((f) => (f.type === "relation" && f.relation === rel) || (f.type === "repeater" && needsRelation(f.fields, rel)));
+  return fields.some(
+    (f) =>
+      (f.type === "relation" && f.relation === rel) ||
+      (f.type === "repeater" && needsRelation(f.fields, rel)),
+  );
 }
 
 export async function loadFormData(config: ResourceConfig, id: string | null) {
@@ -49,15 +58,30 @@ export async function loadFormData(config: ResourceConfig, id: string | null) {
           select: { id: true, createdAt: true, note: true, user: { select: { name: true } } },
         })
       : [],
-    needsRelation(config.fields, "programme") ? prisma.programme.findMany({ orderBy: { order: "asc" }, select: { id: true, name: true, status: true } }) : [],
-    needsRelation(config.fields, "album") ? prisma.album.findMany({ orderBy: { title: "asc" }, select: { id: true, title: true } }) : [],
+    needsRelation(config.fields, "programme")
+      ? prisma.programme.findMany({
+          orderBy: { order: "asc" },
+          select: { id: true, name: true, status: true },
+        })
+      : [],
+    needsRelation(config.fields, "album")
+      ? prisma.album.findMany({ orderBy: { title: "asc" }, select: { id: true, title: true } })
+      : [],
   ]);
   return {
     record: record ? (JSON.parse(JSON.stringify(record)) as Record<string, unknown>) : null,
     media,
-    versions: versions.map((v) => ({ id: v.id, createdAt: v.createdAt.toISOString(), note: v.note, user: v.user?.name ?? null })),
+    versions: versions.map((v) => ({
+      id: v.id,
+      createdAt: v.createdAt.toISOString(),
+      note: v.note,
+      user: v.user?.name ?? null,
+    })),
     relations: {
-      programme: programmes.map((p) => ({ value: p.id, label: `${p.name}${p.status !== "ACTIVE" ? ` (${p.status.toLowerCase()})` : ""}` })),
+      programme: programmes.map((p) => ({
+        value: p.id,
+        label: `${p.name}${p.status !== "ACTIVE" ? ` (${p.status.toLowerCase()})` : ""}`,
+      })),
       album: albums.map((a) => ({ value: a.id, label: a.title })),
     },
   };

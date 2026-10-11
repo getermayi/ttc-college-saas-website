@@ -37,7 +37,9 @@ export default async function AdmissionsPage() {
   const steps = sectionByKey(sections, "admissions.steps");
   const docs = sectionByKey(sections, "admissions.documents");
   const forms = downloads.filter((d) => d.category === "ADMISSION_FORM" || d.category === "PROSPECTUS");
-  const admissionFaqs = faqs.filter((f) => ["Admissions", "Fees & documents", "Programmes"].includes(f.category));
+  const admissionFaqs = faqs.filter((f) =>
+    ["Admissions", "Fees & documents", "Programmes"].includes(f.category),
+  );
 
   return (
     <>
@@ -64,17 +66,19 @@ export default async function AdmissionsPage() {
           <SectionHeading id="steps-title" eyebrow={steps.eyebrow} title={steps.title ?? "How it works"} />
           <ol className="mt-10 grid gap-4 md:grid-cols-5">
             {steps.items.map((s, i) => (
-              <li key={i} className="reveal relative rounded-3xl border border-border bg-surface p-6">
-                <span className="grid size-10 place-items-center rounded-full bg-primary font-display text-lg font-semibold text-primary-foreground">{i + 1}</span>
-                <h3 className="mt-5 font-sans text-[1.05rem] font-semibold leading-snug">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.description}</p>
+              <li key={i} className="reveal border-border bg-surface relative rounded-3xl border p-6">
+                <span className="bg-primary font-display text-primary-foreground grid size-10 place-items-center rounded-full text-lg font-semibold">
+                  {i + 1}
+                </span>
+                <h3 className="mt-5 font-sans text-[1.05rem] leading-snug font-semibold">{s.title}</h3>
+                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{s.description}</p>
               </li>
             ))}
           </ol>
         </section>
       ) : null}
 
-      <section id="eligibility" className="scroll-mt-24 bg-surface-2/60" aria-labelledby="elig-title">
+      <section id="eligibility" className="bg-surface-2/60 scroll-mt-24" aria-labelledby="elig-title">
         <div className="container-page section-y grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <SectionHeading
@@ -85,25 +89,39 @@ export default async function AdmissionsPage() {
             />
           </div>
           <div className="lg:col-span-8">
-            <div className="rounded-[2rem] border border-border bg-background p-5 shadow-[var(--shadow-soft)] sm:p-8">
-              <EligibilityAndEnquiry config={config} whatsappUrl={whatsappLink(settings.whatsappNumber, settings.whatsappMessage)} phoneHref={telLink(settings.phone)} />
+            <div className="border-border bg-background rounded-[2rem] border p-5 shadow-[var(--shadow-soft)] sm:p-8">
+              <EligibilityAndEnquiry
+                config={config}
+                whatsappUrl={whatsappLink(settings.whatsappNumber, settings.whatsappMessage)}
+                phoneHref={telLink(settings.phone)}
+              />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="container-page section-y grid gap-12 lg:grid-cols-2" aria-label="Dates and documents">
+      <section
+        className="container-page section-y grid gap-12 lg:grid-cols-2"
+        aria-label="Dates and documents"
+      >
         <div id="dates" className="scroll-mt-24">
           <h2 className="text-h2 font-semibold">Important dates</h2>
           {dates.length ? (
             <ol className="mt-8 space-y-3">
               {dates.map((d) => (
-                <li key={d.id} className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-4">
-                  <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-accent-soft text-center text-accent-soft-foreground">
+                <li
+                  key={d.id}
+                  className="border-border bg-surface flex items-center gap-4 rounded-2xl border p-4"
+                >
+                  <span className="bg-accent-soft text-accent-soft-foreground grid size-14 shrink-0 place-items-center rounded-xl text-center">
                     {d.date ? (
                       <span className="leading-none">
-                        <span className="block font-display text-xl font-semibold">{formatDate(d.date, { day: "numeric" })}</span>
-                        <span className="text-[0.7rem] font-semibold uppercase">{formatDate(d.date, { month: "short" })}</span>
+                        <span className="font-display block text-xl font-semibold">
+                          {formatDate(d.date, { day: "numeric" })}
+                        </span>
+                        <span className="text-[0.7rem] font-semibold uppercase">
+                          {formatDate(d.date, { month: "short" })}
+                        </span>
                       </span>
                     ) : (
                       <CalendarDays className="size-6" aria-hidden />
@@ -112,10 +130,16 @@ export default async function AdmissionsPage() {
                   <div>
                     <p className="font-semibold">
                       {d.label}
-                      {d.programme ? <span className="ml-2 text-sm font-normal text-muted-foreground">{d.programme.shortName}</span> : null}
+                      {d.programme ? (
+                        <span className="text-muted-foreground ml-2 text-sm font-normal">
+                          {d.programme.shortName}
+                        </span>
+                      ) : null}
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {d.date ? `${formatDate(d.date, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}${d.endDate ? ` – ${formatDate(d.endDate)}` : ""}` : "To be announced"}
+                    <p className="text-muted-foreground text-sm">
+                      {d.date
+                        ? `${formatDate(d.date, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}${d.endDate ? ` – ${formatDate(d.endDate)}` : ""}`
+                        : "To be announced"}
                       {d.note ? ` · ${d.note}` : ""}
                     </p>
                   </div>
@@ -136,7 +160,7 @@ export default async function AdmissionsPage() {
             />
           )}
 
-          <h2 className="mt-14 text-h3 font-semibold">Forms & prospectus</h2>
+          <h2 className="text-h3 mt-14 font-semibold">Forms & prospectus</h2>
           {forms.length ? (
             <ul className="mt-5 space-y-3">
               {forms.map((d) => (
@@ -146,7 +170,7 @@ export default async function AdmissionsPage() {
               ))}
             </ul>
           ) : (
-            <p className="mt-4 flex items-start gap-3 rounded-2xl border border-dashed border-border-strong p-4 text-muted-foreground">
+            <p className="border-border-strong text-muted-foreground mt-4 flex items-start gap-3 rounded-2xl border border-dashed p-4">
               <Download className="mt-0.5 size-5 shrink-0" aria-hidden />
               Downloadable forms will be published here when the application process opens.
             </p>
@@ -163,14 +187,16 @@ export default async function AdmissionsPage() {
                 </Link>
               </Button>
             </div>
-            {docs.subtitle ? <p className="mt-3 text-muted-foreground">{docs.subtitle}</p> : null}
-            <ul className="mt-8 divide-y divide-border rounded-3xl border border-border bg-surface">
+            {docs.subtitle ? <p className="text-muted-foreground mt-3">{docs.subtitle}</p> : null}
+            <ul className="divide-border border-border bg-surface mt-8 divide-y rounded-3xl border">
               {docs.items.map((d, i) => (
                 <li key={i} className="flex gap-4 p-4">
-                  <FileText className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+                  <FileText className="text-primary mt-0.5 size-5 shrink-0" aria-hidden />
                   <span>
                     <span className="font-semibold">{d.title}</span>
-                    {d.description ? <span className="block text-sm text-muted-foreground">{d.description}</span> : null}
+                    {d.description ? (
+                      <span className="text-muted-foreground block text-sm">{d.description}</span>
+                    ) : null}
                   </span>
                 </li>
               ))}
@@ -182,7 +208,7 @@ export default async function AdmissionsPage() {
       {admissionFaqs.length ? (
         <section id="faq" className="container-page scroll-mt-24 pb-8" aria-labelledby="faq-title">
           <SectionHeading id="faq-title" eyebrow="FAQ" title="Questions students often ask" />
-          <div className="mt-8 rounded-3xl border border-border bg-surface px-6 md:px-8">
+          <div className="border-border bg-surface mt-8 rounded-3xl border px-6 md:px-8">
             <FaqList items={admissionFaqs} />
           </div>
           <JsonLd data={faqJsonLd(admissionFaqs)} />

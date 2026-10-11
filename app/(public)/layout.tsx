@@ -15,7 +15,7 @@ export default async function PublicLayout({ children }: LayoutProps<"/">) {
     <>
       <a
         href="#main"
-        className="sr-only z-[60] rounded-full bg-primary px-4 py-2 font-semibold text-primary-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        className="bg-primary text-primary-foreground sr-only z-[60] rounded-full px-4 py-2 font-semibold focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
       >
         Skip to content
       </a>
@@ -31,7 +31,11 @@ export default async function PublicLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
       <SiteFooter settings={settings} nav={nav} />
-      <MobileActionBar phone={settings.phone} whatsapp={settings.whatsappNumber} whatsappMessage={settings.whatsappMessage} />
+      <MobileActionBar
+        phone={settings.phone}
+        whatsapp={settings.whatsappNumber}
+        whatsappMessage={settings.whatsappMessage}
+      />
       <WhatsAppFloat whatsapp={settings.whatsappNumber} message={settings.whatsappMessage} />
       <ConsentAndAnalytics gaId={settings.gaMeasurementId} pixelId={settings.metaPixelId} />
       <UtmCapture />

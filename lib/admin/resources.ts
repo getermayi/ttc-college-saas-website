@@ -59,9 +59,30 @@ const CONTENT_STATUS = opts(["DRAFT", "PUBLISHED"], { DRAFT: "Draft", PUBLISHED:
 const STATUS = { field: "status", published: "PUBLISHED", draft: "DRAFT", options: CONTENT_STATUS };
 
 const seoFields: FieldDef[] = [
-  { name: "seoTitle", label: "SEO title", type: "text", maxLength: 70, group: "SEO", hint: "Shown in Google results. Aim for 50–60 characters." },
-  { name: "seoDescription", label: "SEO description", type: "textarea", maxLength: 200, rows: 2, group: "SEO", hint: "Aim for 140–160 characters." },
-  { name: "ogImageId", label: "Social sharing image", type: "image", group: "SEO", hint: "1200 × 630 px works best." },
+  {
+    name: "seoTitle",
+    label: "SEO title",
+    type: "text",
+    maxLength: 70,
+    group: "SEO",
+    hint: "Shown in Google results. Aim for 50–60 characters.",
+  },
+  {
+    name: "seoDescription",
+    label: "SEO description",
+    type: "textarea",
+    maxLength: 200,
+    rows: 2,
+    group: "SEO",
+    hint: "Aim for 140–160 characters.",
+  },
+  {
+    name: "ogImageId",
+    label: "Social sharing image",
+    type: "image",
+    group: "SEO",
+    hint: "1200 × 630 px works best.",
+  },
   { name: "noindex", label: "Hide from search engines (noindex)", type: "boolean", group: "SEO" },
 ];
 
@@ -82,9 +103,26 @@ export const RESOURCES: ResourceConfig[] = [
     fields: [
       { name: "title", label: "Title", type: "text", required: true, maxLength: 200, wide: true },
       { name: "slug", label: "URL slug", type: "slug", from: "title", required: true },
-      { name: "category", label: "Category", type: "select", required: true, options: opts(NOTICE_CATEGORIES, NOTICE_CATEGORY_LABELS) },
-      { name: "publishedAt", label: "Publish date", type: "datetime", required: true, hint: "Notices with a future date stay hidden until then." },
-      { name: "expiresAt", label: "Hide after", type: "datetime", hint: "Optional. The notice disappears after this date." },
+      {
+        name: "category",
+        label: "Category",
+        type: "select",
+        required: true,
+        options: opts(NOTICE_CATEGORIES, NOTICE_CATEGORY_LABELS),
+      },
+      {
+        name: "publishedAt",
+        label: "Publish date",
+        type: "datetime",
+        required: true,
+        hint: "Notices with a future date stay hidden until then.",
+      },
+      {
+        name: "expiresAt",
+        label: "Hide after",
+        type: "datetime",
+        hint: "Optional. The notice disappears after this date.",
+      },
       { name: "pinned", label: "Pin to top", type: "boolean" },
       { name: "summary", label: "Short summary", type: "textarea", rows: 2, maxLength: 300, wide: true },
       { name: "body", label: "Notice text", type: "richtext", wide: true },
@@ -113,25 +151,61 @@ export const RESOURCES: ResourceConfig[] = [
     model: "programme",
     label: "Programmes",
     singular: "Programme",
-    description: "Only ACTIVE programmes appear on the website. VERIFY programmes stay hidden until confirmed.",
+    description:
+      "Only ACTIVE programmes appear on the website. VERIFY programmes stay hidden until confirmed.",
     titleField: "name",
     subtitleField: "level",
     fields: [
       { name: "name", label: "Full name", type: "text", required: true, wide: true },
       { name: "shortName", label: "Short name", type: "text", required: true, placeholder: "B.Ed." },
       { name: "slug", label: "URL slug", type: "slug", from: "shortName", required: true },
-      { name: "status", label: "Status", type: "select", required: true, options: opts(["ACTIVE", "VERIFY", "DRAFT", "ARCHIVED"], PROGRAMME_STATUS_LABELS) },
+      {
+        name: "status",
+        label: "Status",
+        type: "select",
+        required: true,
+        options: opts(["ACTIVE", "VERIFY", "DRAFT", "ARCHIVED"], PROGRAMME_STATUS_LABELS),
+      },
       { name: "level", label: "Level", type: "text", required: true },
-      { name: "approvalNote", label: "Internal approval note", type: "textarea", rows: 2, wide: true, hint: "Admin-only. Never shown publicly." },
+      {
+        name: "approvalNote",
+        label: "Internal approval note",
+        type: "textarea",
+        rows: 2,
+        wide: true,
+        hint: "Admin-only. Never shown publicly.",
+      },
       { name: "tagline", label: "Tagline", type: "text", wide: true },
       { name: "summary", label: "Summary", type: "textarea", required: true, rows: 3, wide: true },
       { name: "overview", label: "Overview", type: "richtext", wide: true },
       { name: "heroImageId", label: "Main photo", type: "image" },
       { name: "duration", label: "Duration", type: "text", group: "Key facts", placeholder: "2 years" },
-      { name: "semesters", label: "Semesters", type: "number", integer: true, min: 1, max: 12, group: "Key facts" },
+      {
+        name: "semesters",
+        label: "Semesters",
+        type: "number",
+        integer: true,
+        min: 1,
+        max: 12,
+        group: "Key facts",
+      },
       { name: "intake", label: "Intake (seats)", type: "number", integer: true, min: 0, group: "Key facts" },
-      { name: "seatsAvailable", label: "Seats still available", type: "number", integer: true, min: 0, group: "Key facts", hint: "Leave empty to hide." },
-      { name: "applicationDeadline", label: "Last date to apply", type: "date", group: "Key facts", hint: "Leave empty until officially announced." },
+      {
+        name: "seatsAvailable",
+        label: "Seats still available",
+        type: "number",
+        integer: true,
+        min: 0,
+        group: "Key facts",
+        hint: "Leave empty to hide.",
+      },
+      {
+        name: "applicationDeadline",
+        label: "Last date to apply",
+        type: "date",
+        group: "Key facts",
+        hint: "Leave empty until officially announced.",
+      },
       { name: "affiliation", label: "Affiliation", type: "text", group: "Key facts", wide: true },
       { name: "recognition", label: "Recognition", type: "text", group: "Key facts", wide: true },
       {
@@ -170,7 +244,13 @@ export const RESOURCES: ResourceConfig[] = [
         itemLabel: "Fee",
         hint: "Leave empty until fees are officially confirmed. The site shows a 'fees coming soon' message.",
         fields: [
-          { name: "label", label: "Item", type: "text", required: true, placeholder: "Tuition fee (per semester)" },
+          {
+            name: "label",
+            label: "Item",
+            type: "text",
+            required: true,
+            placeholder: "Tuition fee (per semester)",
+          },
           { name: "amount", label: "Amount", type: "text", required: true, placeholder: "₹ …" },
           { name: "note", label: "Note", type: "text" },
         ],
@@ -192,7 +272,12 @@ export const RESOURCES: ResourceConfig[] = [
     searchFields: ["name", "shortName"],
     orderBy: [{ order: "asc" }],
     orderable: true,
-    status: { field: "status", published: "ACTIVE", draft: "DRAFT", options: opts(["ACTIVE", "VERIFY", "DRAFT", "ARCHIVED"], PROGRAMME_STATUS_LABELS) },
+    status: {
+      field: "status",
+      published: "ACTIVE",
+      draft: "DRAFT",
+      options: opts(["ACTIVE", "VERIFY", "DRAFT", "ARCHIVED"], PROGRAMME_STATUS_LABELS),
+    },
     tags: ["programmes", "eligibility", "admission-dates"],
     unique: ["slug"],
     previewable: true,
@@ -204,13 +289,33 @@ export const RESOURCES: ResourceConfig[] = [
     model: "eligibilityRule",
     label: "Eligibility rules",
     singular: "Eligibility rule",
-    description: "Rules behind the public eligibility checker. Leave minimum marks empty when the cut-off is 'as per Government rules'.",
+    description:
+      "Rules behind the public eligibility checker. Leave minimum marks empty when the cut-off is 'as per Government rules'.",
     titleField: "category",
     fields: [
       { name: "programmeId", label: "Programme", type: "relation", relation: "programme", required: true },
-      { name: "category", label: "Category", type: "select", required: true, options: opts(CATEGORIES, CATEGORY_LABELS) },
-      { name: "qualifications", label: "Accepted qualifications", type: "tags", hint: "Use BACHELORS and/or MASTERS.", wide: true },
-      { name: "minPercent", label: "Minimum marks (%)", type: "number", min: 0, max: 100, hint: "Leave empty if not yet confirmed." },
+      {
+        name: "category",
+        label: "Category",
+        type: "select",
+        required: true,
+        options: opts(CATEGORIES, CATEGORY_LABELS),
+      },
+      {
+        name: "qualifications",
+        label: "Accepted qualifications",
+        type: "tags",
+        hint: "Use BACHELORS and/or MASTERS.",
+        wide: true,
+      },
+      {
+        name: "minPercent",
+        label: "Minimum marks (%)",
+        type: "number",
+        min: 0,
+        max: 100,
+        hint: "Leave empty if not yet confirmed.",
+      },
       { name: "resultNote", label: "Message shown with the result", type: "textarea", rows: 2, wide: true },
     ],
     columns: [
@@ -232,13 +337,27 @@ export const RESOURCES: ResourceConfig[] = [
     model: "admissionDate",
     label: "Admission dates",
     singular: "Important date",
-    description: "Important dates shown on the Admissions page. Only add dates that are officially confirmed.",
+    description:
+      "Important dates shown on the Admissions page. Only add dates that are officially confirmed.",
     titleField: "label",
     fields: [
-      { name: "label", label: "Label", type: "text", required: true, placeholder: "Last date to submit application", wide: true },
+      {
+        name: "label",
+        label: "Label",
+        type: "text",
+        required: true,
+        placeholder: "Last date to submit application",
+        wide: true,
+      },
       { name: "date", label: "Date", type: "date", hint: "Leave empty to show 'To be announced'." },
       { name: "endDate", label: "End date", type: "date" },
-      { name: "programmeId", label: "Programme", type: "relation", relation: "programme", hint: "Leave empty for all programmes." },
+      {
+        name: "programmeId",
+        label: "Programme",
+        type: "relation",
+        relation: "programme",
+        hint: "Leave empty for all programmes.",
+      },
       { name: "note", label: "Note", type: "text" },
     ],
     columns: [
@@ -263,9 +382,21 @@ export const RESOURCES: ResourceConfig[] = [
     fields: [
       { name: "name", label: "Full name", type: "text", required: true },
       { name: "designation", label: "Designation", type: "text", required: true },
-      { name: "type", label: "Type", type: "select", required: true, options: opts(STAFF_TYPES, STAFF_TYPE_LABELS) },
+      {
+        name: "type",
+        label: "Type",
+        type: "select",
+        required: true,
+        options: opts(STAFF_TYPES, STAFF_TYPE_LABELS),
+      },
       { name: "department", label: "Department / subject", type: "text" },
-      { name: "qualifications", label: "Qualifications", type: "text", wide: true, placeholder: "M.A., M.Ed., NET" },
+      {
+        name: "qualifications",
+        label: "Qualifications",
+        type: "text",
+        wide: true,
+        placeholder: "M.A., M.Ed., NET",
+      },
       { name: "specialisation", label: "Specialisation", type: "text" },
       { name: "experience", label: "Experience", type: "text" },
       { name: "email", label: "Public email", type: "email" },
@@ -298,7 +429,13 @@ export const RESOURCES: ResourceConfig[] = [
     fields: [
       { name: "name", label: "Name", type: "text", required: true },
       { name: "slug", label: "URL anchor", type: "slug", from: "name", required: true },
-      { name: "category", label: "Category", type: "select", required: true, options: opts(FACILITY_CATEGORIES) },
+      {
+        name: "category",
+        label: "Category",
+        type: "select",
+        required: true,
+        options: opts(FACILITY_CATEGORIES),
+      },
       { name: "coverId", label: "Cover photo", type: "image" },
       { name: "summary", label: "Summary", type: "textarea", required: true, rows: 2, wide: true },
       { name: "description", label: "Description", type: "richtext", wide: true },
@@ -348,7 +485,13 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "summary", label: "Summary", type: "textarea", required: true, rows: 2, wide: true },
       { name: "body", label: "Details", type: "richtext", wide: true },
       { name: "coverId", label: "Cover photo", type: "image" },
-      { name: "albumId", label: "Photo album", type: "relation", relation: "album", hint: "Optional: link an album of event photos." },
+      {
+        name: "albumId",
+        label: "Photo album",
+        type: "relation",
+        relation: "album",
+        hint: "Optional: link an album of event photos.",
+      },
       ...seoFields,
     ],
     columns: [
@@ -371,7 +514,8 @@ export const RESOURCES: ResourceConfig[] = [
     model: "album",
     label: "Gallery albums",
     singular: "Album",
-    description: "Photo albums for the Gallery. Tick 'Show on home page' to feature photos in the campus life section.",
+    description:
+      "Photo albums for the Gallery. Tick 'Show on home page' to feature photos in the campus life section.",
     titleField: "title",
     subtitleField: "category",
     fields: [
@@ -416,16 +560,31 @@ export const RESOURCES: ResourceConfig[] = [
     model: "testimonial",
     label: "Testimonials",
     singular: "Testimonial",
-    description: "Real quotes from real students and alumni, with their permission. Never publish made-up testimonials.",
+    description:
+      "Real quotes from real students and alumni, with their permission. Never publish made-up testimonials.",
     titleField: "name",
     subtitleField: "role",
     fields: [
       { name: "name", label: "Name", type: "text", required: true },
       { name: "role", label: "Role / batch", type: "text", required: true, placeholder: "B.Ed. 2023–25" },
-      { name: "quote", label: "Quote", type: "textarea", required: true, rows: 4, wide: true, maxLength: 600 },
+      {
+        name: "quote",
+        label: "Quote",
+        type: "textarea",
+        required: true,
+        rows: 4,
+        wide: true,
+        maxLength: 600,
+      },
       { name: "photoId", label: "Photo", type: "image" },
       { name: "showOnHome", label: "Show on home page", type: "boolean" },
-      { name: "consent", label: "This person agreed to be quoted on the website", type: "boolean", wide: true, hint: "Required — testimonials without consent are never shown." },
+      {
+        name: "consent",
+        label: "This person agreed to be quoted on the website",
+        type: "boolean",
+        wide: true,
+        hint: "Required — testimonials without consent are never shown.",
+      },
     ],
     columns: [
       { field: "photo", label: "", type: "image" },
@@ -452,7 +611,15 @@ export const RESOURCES: ResourceConfig[] = [
     subtitleField: "category",
     fields: [
       { name: "question", label: "Question", type: "text", required: true, wide: true },
-      { name: "answer", label: "Answer", type: "textarea", required: true, rows: 4, wide: true, hint: "Plain text. Leave a blank line between paragraphs." },
+      {
+        name: "answer",
+        label: "Answer",
+        type: "textarea",
+        required: true,
+        rows: 4,
+        wide: true,
+        hint: "Plain text. Leave a blank line between paragraphs.",
+      },
       { name: "category", label: "Category", type: "select", required: true, options: opts(FAQ_CATEGORIES) },
       { name: "showOnHome", label: "Show on home page", type: "boolean" },
     ],
@@ -474,11 +641,18 @@ export const RESOURCES: ResourceConfig[] = [
     model: "download",
     label: "Downloads & disclosures",
     singular: "Document",
-    description: "Admission forms, prospectus and mandatory disclosures (NCTE, RGU, RTI, anti-ragging, IQAC…).",
+    description:
+      "Admission forms, prospectus and mandatory disclosures (NCTE, RGU, RTI, anti-ragging, IQAC…).",
     titleField: "title",
     fields: [
       { name: "title", label: "Title", type: "text", required: true, wide: true },
-      { name: "category", label: "Category", type: "select", required: true, options: opts(DOWNLOAD_CATEGORIES, DOWNLOAD_CATEGORY_LABELS) },
+      {
+        name: "category",
+        label: "Category",
+        type: "select",
+        required: true,
+        options: opts(DOWNLOAD_CATEGORIES, DOWNLOAD_CATEGORY_LABELS),
+      },
       { name: "issuedOn", label: "Issued on", type: "date" },
       { name: "fileId", label: "PDF file", type: "file" },
       { name: "externalUrl", label: "Or external link", type: "url" },
@@ -503,7 +677,8 @@ export const RESOURCES: ResourceConfig[] = [
     model: "page",
     label: "Pages",
     singular: "Page",
-    description: "Rich-text pages such as the privacy policy and student life. New pages are served at /your-slug.",
+    description:
+      "Rich-text pages such as the privacy policy and student life. New pages are served at /your-slug.",
     titleField: "title",
     subtitleField: "slug",
     fields: [
@@ -574,7 +749,14 @@ export const RESOURCES: ResourceConfig[] = [
     tags: ["sections"],
     canCreate: false,
     canDelete: false,
-    groupBy: { field: "page", options: opts(["home", "about", "admissions"], { home: "Home", about: "About", admissions: "Admissions" }) },
+    groupBy: {
+      field: "page",
+      options: opts(["home", "about", "admissions"], {
+        home: "Home",
+        about: "About",
+        admissions: "Admissions",
+      }),
+    },
     publicPath: (r) => (r.page === "home" ? "/" : `/${r.page}`),
   },
   {
@@ -586,7 +768,18 @@ export const RESOURCES: ResourceConfig[] = [
     titleField: "label",
     subtitleField: "href",
     fields: [
-      { name: "menu", label: "Menu", type: "select", required: true, options: opts(["HEADER", "FOOTER_EXPLORE", "FOOTER_STUDENTS", "FOOTER_LEGAL"], { HEADER: "Header", FOOTER_EXPLORE: "Footer: Explore", FOOTER_STUDENTS: "Footer: Students", FOOTER_LEGAL: "Footer: Legal" }) },
+      {
+        name: "menu",
+        label: "Menu",
+        type: "select",
+        required: true,
+        options: opts(["HEADER", "FOOTER_EXPLORE", "FOOTER_STUDENTS", "FOOTER_LEGAL"], {
+          HEADER: "Header",
+          FOOTER_EXPLORE: "Footer: Explore",
+          FOOTER_STUDENTS: "Footer: Students",
+          FOOTER_LEGAL: "Footer: Legal",
+        }),
+      },
       { name: "label", label: "Label", type: "text", required: true },
       { name: "href", label: "Link", type: "url", required: true, placeholder: "/admissions" },
       { name: "enabled", label: "Visible", type: "boolean" },
@@ -601,7 +794,15 @@ export const RESOURCES: ResourceConfig[] = [
     orderBy: [{ menu: "asc" }, { order: "asc" }],
     orderable: true,
     tags: ["nav"],
-    groupBy: { field: "menu", options: opts(["HEADER", "FOOTER_EXPLORE", "FOOTER_STUDENTS", "FOOTER_LEGAL"], { HEADER: "Header", FOOTER_EXPLORE: "Footer: Explore", FOOTER_STUDENTS: "Footer: Students", FOOTER_LEGAL: "Footer: Legal" }) },
+    groupBy: {
+      field: "menu",
+      options: opts(["HEADER", "FOOTER_EXPLORE", "FOOTER_STUDENTS", "FOOTER_LEGAL"], {
+        HEADER: "Header",
+        FOOTER_EXPLORE: "Footer: Explore",
+        FOOTER_STUDENTS: "Footer: Students",
+        FOOTER_LEGAL: "Footer: Legal",
+      }),
+    },
     defaults: { menu: "HEADER", enabled: true },
   },
   {
@@ -613,8 +814,23 @@ export const RESOURCES: ResourceConfig[] = [
     titleField: "label",
     subtitleField: "path",
     fields: [
-      { name: "title", label: "SEO title", type: "text", maxLength: 70, wide: true, hint: "Aim for 50–60 characters." },
-      { name: "description", label: "SEO description", type: "textarea", rows: 3, maxLength: 200, wide: true, hint: "Aim for 140–160 characters." },
+      {
+        name: "title",
+        label: "SEO title",
+        type: "text",
+        maxLength: 70,
+        wide: true,
+        hint: "Aim for 50–60 characters.",
+      },
+      {
+        name: "description",
+        label: "SEO description",
+        type: "textarea",
+        rows: 3,
+        maxLength: 200,
+        wide: true,
+        hint: "Aim for 140–160 characters.",
+      },
       { name: "ogImageId", label: "Social sharing image", type: "image", hint: "1200 × 630 px." },
       { name: "noindex", label: "Hide from search engines (noindex)", type: "boolean" },
     ],
@@ -645,5 +861,10 @@ export const RESOURCE_GROUPS: { label: string; keys: string[] }[] = [
 ];
 
 export function getPath(obj: Record<string, unknown>, path: string): unknown {
-  return path.split(".").reduce<unknown>((acc, k) => (acc && typeof acc === "object" ? (acc as Record<string, unknown>)[k] : undefined), obj);
+  return path
+    .split(".")
+    .reduce<unknown>(
+      (acc, k) => (acc && typeof acc === "object" ? (acc as Record<string, unknown>)[k] : undefined),
+      obj,
+    );
 }

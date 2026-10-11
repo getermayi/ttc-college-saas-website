@@ -24,14 +24,24 @@ export default async function ResourceEditPage({ params }: PageProps<"/admin/con
   const data = await loadFormData(config, id);
   if (id && !data.record) notFound();
   const initial = toFormValues(config.fields, data.record ?? { ...config.defaults });
-  const title = data.record ? String(data.record[config.titleField] ?? config.singular) : `New ${config.singular.toLowerCase()}`;
-  const status = config.status ? String(data.record?.[config.status.field] ?? config.defaults?.[config.status.field] ?? config.status.draft) : null;
+  const title = data.record
+    ? String(data.record[config.titleField] ?? config.singular)
+    : `New ${config.singular.toLowerCase()}`;
+  const status = config.status
+    ? String(
+        data.record?.[config.status.field] ?? config.defaults?.[config.status.field] ?? config.status.draft,
+      )
+    : null;
   return (
     <>
       <AdminPageHeader
         back={{ href: `/admin/content/${config.key}`, label: config.label }}
         title={title}
-        description={data.record && config.subtitleField ? String(data.record[config.subtitleField] ?? "") : config.description}
+        description={
+          data.record && config.subtitleField
+            ? String(data.record[config.subtitleField] ?? "")
+            : config.description
+        }
       />
       <ResourceForm
         key={`${id ?? "new"}-${String(data.record?.updatedAt ?? "")}`}

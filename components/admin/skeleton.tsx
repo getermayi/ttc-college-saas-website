@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function AdminSkeleton() {
   return (
     <div className="flex min-h-dvh">
-      <div className="hidden w-64 border-r border-border bg-surface p-4 lg:block">
+      <div className="border-border bg-surface hidden w-64 border-r p-4 lg:block">
         <Skeleton className="h-10 w-32" />
         <div className="mt-8 space-y-3">
           {Array.from({ length: 10 }).map((_, i) => (

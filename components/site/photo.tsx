@@ -36,7 +36,7 @@ export function Photo({
 }) {
   if (media && media.kind === "IMAGE") {
     return (
-      <div className={cn("relative overflow-hidden bg-surface-2", rounded, className)}>
+      <div className={cn("bg-surface-2 relative overflow-hidden", rounded, className)}>
         <Image
           src={media.url}
           alt={media.alt}
@@ -56,10 +56,15 @@ export function Photo({
       role={label ? "img" : undefined}
       aria-label={label ? `${label} (photo coming soon)` : undefined}
       aria-hidden={label ? undefined : true}
-      className={cn("relative isolate overflow-hidden bg-gradient-to-br", GRADIENTS[variant % GRADIENTS.length], rounded, className)}
+      className={cn(
+        "relative isolate overflow-hidden bg-gradient-to-br",
+        GRADIENTS[variant % GRADIENTS.length],
+        rounded,
+        className,
+      )}
     >
       <div className="motif-texture-light absolute inset-0 opacity-90" />
-      <div className="absolute -right-10 -top-10 size-48 rounded-full bg-white/10 blur-2xl" />
+      <div className="absolute -top-10 -right-10 size-48 rounded-full bg-white/10 blur-2xl" />
       <div className="absolute -bottom-16 -left-10 size-56 rounded-full bg-black/15 blur-2xl" />
       {label ? (
         <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/25 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">

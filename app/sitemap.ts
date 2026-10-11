@@ -1,8 +1,18 @@
 import type { MetadataRoute } from "next";
-import { getActiveProgrammes, getAlbums, getEvents, getNotices, getPublishedPageSlugs } from "@/lib/data/public";
+import {
+  getActiveProgrammes,
+  getAlbums,
+  getEvents,
+  getNotices,
+  getPublishedPageSlugs,
+} from "@/lib/data/public";
 import { absoluteUrl } from "@/lib/utils";
 
-const STATIC: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
+const STATIC: {
+  path: string;
+  priority: number;
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+}[] = [
   { path: "/", priority: 1, changeFrequency: "weekly" },
   { path: "/admissions", priority: 0.95, changeFrequency: "weekly" },
   { path: "/enquire", priority: 0.9, changeFrequency: "monthly" },
@@ -29,11 +39,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getPublishedPageSlugs(),
   ]);
   return [
-    ...STATIC.map((s) => ({ url: absoluteUrl(s.path), priority: s.priority, changeFrequency: s.changeFrequency })),
-    ...programmes.filter((p) => !p.noindex).map((p) => ({ url: absoluteUrl(`/programmes/${p.slug}`), lastModified: p.updatedAt, priority: 0.9 })),
-    ...notices.map((n) => ({ url: absoluteUrl(`/notices/${n.slug}`), lastModified: n.publishedAt, priority: 0.6 })),
-    ...events.map((e) => ({ url: absoluteUrl(`/events/${e.slug}`), lastModified: e.updatedAt, priority: 0.5 })),
-    ...albums.map((a) => ({ url: absoluteUrl(`/gallery/${a.slug}`), lastModified: a.updatedAt, priority: 0.4 })),
-    ...pages.filter((p) => !p.noindex && p.slug !== "student-life").map((p) => ({ url: absoluteUrl(`/${p.slug}`), lastModified: p.updatedAt, priority: 0.4 })),
+    ...STATIC.map((s) => ({
+      url: absoluteUrl(s.path),
+      priority: s.priority,
+      changeFrequency: s.changeFrequency,
+    })),
+    ...programmes
+      .filter((p) => !p.noindex)
+      .map((p) => ({ url: absoluteUrl(`/programmes/${p.slug}`), lastModified: p.updatedAt, priority: 0.9 })),
+    ...notices.map((n) => ({
+      url: absoluteUrl(`/notices/${n.slug}`),
+      lastModified: n.publishedAt,
+      priority: 0.6,
+    })),
+    ...events.map((e) => ({
+      url: absoluteUrl(`/events/${e.slug}`),
+      lastModified: e.updatedAt,
+      priority: 0.5,
+    })),
+    ...albums.map((a) => ({
+      url: absoluteUrl(`/gallery/${a.slug}`),
+      lastModified: a.updatedAt,
+      priority: 0.4,
+    })),
+    ...pages
+      .filter((p) => !p.noindex && p.slug !== "student-life")
+      .map((p) => ({ url: absoluteUrl(`/${p.slug}`), lastModified: p.updatedAt, priority: 0.4 })),
   ];
 }

@@ -22,7 +22,19 @@ import {
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 
-function ToolbarButton({ onClick, active, label, children, disabled }: { onClick: () => void; active?: boolean; label: string; children: React.ReactNode; disabled?: boolean }) {
+function ToolbarButton({
+  onClick,
+  active,
+  label,
+  children,
+  disabled,
+}: {
+  onClick: () => void;
+  active?: boolean;
+  label: string;
+  children: React.ReactNode;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
@@ -31,7 +43,10 @@ function ToolbarButton({ onClick, active, label, children, disabled }: { onClick
       aria-label={label}
       title={label}
       aria-pressed={active}
-      className={cn("grid size-8 place-items-center rounded-lg text-foreground/75 hover:bg-surface-2 hover:text-foreground disabled:opacity-40 [&_svg]:size-4", active && "bg-primary-soft text-primary-soft-foreground")}
+      className={cn(
+        "text-foreground/75 hover:bg-surface-2 hover:text-foreground grid size-8 place-items-center rounded-lg disabled:opacity-40 [&_svg]:size-4",
+        active && "bg-primary-soft text-primary-soft-foreground",
+      )}
     >
       {children}
     </button>
@@ -47,51 +62,103 @@ function Toolbar({ editor }: { editor: Editor }) {
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   };
   return (
-    <div role="toolbar" aria-label="Formatting" className="flex flex-wrap items-center gap-0.5 border-b border-border bg-surface-2/50 p-1.5">
-      <ToolbarButton label="Heading" active={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+    <div
+      role="toolbar"
+      aria-label="Formatting"
+      className="border-border bg-surface-2/50 flex flex-wrap items-center gap-0.5 border-b p-1.5"
+    >
+      <ToolbarButton
+        label="Heading"
+        active={editor.isActive("heading", { level: 2 })}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+      >
         <Heading2 />
       </ToolbarButton>
-      <ToolbarButton label="Subheading" active={editor.isActive("heading", { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
+      <ToolbarButton
+        label="Subheading"
+        active={editor.isActive("heading", { level: 3 })}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+      >
         <Heading3 />
       </ToolbarButton>
-      <span className="mx-1 h-5 w-px bg-border" aria-hidden />
-      <ToolbarButton label="Bold" active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}>
+      <span className="bg-border mx-1 h-5 w-px" aria-hidden />
+      <ToolbarButton
+        label="Bold"
+        active={editor.isActive("bold")}
+        onClick={() => editor.chain().focus().toggleBold().run()}
+      >
         <Bold />
       </ToolbarButton>
-      <ToolbarButton label="Italic" active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}>
+      <ToolbarButton
+        label="Italic"
+        active={editor.isActive("italic")}
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+      >
         <Italic />
       </ToolbarButton>
-      <ToolbarButton label="Underline" active={editor.isActive("underline")} onClick={() => editor.chain().focus().toggleUnderline().run()}>
+      <ToolbarButton
+        label="Underline"
+        active={editor.isActive("underline")}
+        onClick={() => editor.chain().focus().toggleUnderline().run()}
+      >
         <Underline />
       </ToolbarButton>
-      <ToolbarButton label="Strikethrough" active={editor.isActive("strike")} onClick={() => editor.chain().focus().toggleStrike().run()}>
+      <ToolbarButton
+        label="Strikethrough"
+        active={editor.isActive("strike")}
+        onClick={() => editor.chain().focus().toggleStrike().run()}
+      >
         <Strikethrough />
       </ToolbarButton>
-      <span className="mx-1 h-5 w-px bg-border" aria-hidden />
-      <ToolbarButton label="Bulleted list" active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()}>
+      <span className="bg-border mx-1 h-5 w-px" aria-hidden />
+      <ToolbarButton
+        label="Bulleted list"
+        active={editor.isActive("bulletList")}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+      >
         <List />
       </ToolbarButton>
-      <ToolbarButton label="Numbered list" active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+      <ToolbarButton
+        label="Numbered list"
+        active={editor.isActive("orderedList")}
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+      >
         <ListOrdered />
       </ToolbarButton>
-      <ToolbarButton label="Quote" active={editor.isActive("blockquote")} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+      <ToolbarButton
+        label="Quote"
+        active={editor.isActive("blockquote")}
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+      >
         <Quote />
       </ToolbarButton>
       <ToolbarButton label="Divider" onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         <Minus />
       </ToolbarButton>
-      <span className="mx-1 h-5 w-px bg-border" aria-hidden />
+      <span className="bg-border mx-1 h-5 w-px" aria-hidden />
       <ToolbarButton label="Add link" active={editor.isActive("link")} onClick={setLink}>
         <Link2 />
       </ToolbarButton>
-      <ToolbarButton label="Remove link" disabled={!editor.isActive("link")} onClick={() => editor.chain().focus().unsetLink().run()}>
+      <ToolbarButton
+        label="Remove link"
+        disabled={!editor.isActive("link")}
+        onClick={() => editor.chain().focus().unsetLink().run()}
+      >
         <Unlink />
       </ToolbarButton>
       <span className="flex-1" />
-      <ToolbarButton label="Undo" disabled={!editor.can().undo()} onClick={() => editor.chain().focus().undo().run()}>
+      <ToolbarButton
+        label="Undo"
+        disabled={!editor.can().undo()}
+        onClick={() => editor.chain().focus().undo().run()}
+      >
         <Undo2 />
       </ToolbarButton>
-      <ToolbarButton label="Redo" disabled={!editor.can().redo()} onClick={() => editor.chain().focus().redo().run()}>
+      <ToolbarButton
+        label="Redo"
+        disabled={!editor.can().redo()}
+        onClick={() => editor.chain().focus().redo().run()}
+      >
         <Redo2 />
       </ToolbarButton>
     </div>
@@ -116,7 +183,10 @@ export function RichTextEditor({
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
-      StarterKit.configure({ heading: { levels: [2, 3] }, link: { openOnClick: false, autolink: true, HTMLAttributes: { rel: "noopener noreferrer" } } }),
+      StarterKit.configure({
+        heading: { levels: [2, 3] },
+        link: { openOnClick: false, autolink: true, HTMLAttributes: { rel: "noopener noreferrer" } },
+      }),
       Placeholder.configure({ placeholder }),
     ],
     content: value || "",
@@ -135,12 +205,18 @@ export function RichTextEditor({
 
   // Sync external resets (e.g. restoring a version).
   useEffect(() => {
-    if (editor && value !== editor.getHTML() && !(value === "" && editor.isEmpty)) editor.commands.setContent(value || "", { emitUpdate: false });
+    if (editor && value !== editor.getHTML() && !(value === "" && editor.isEmpty))
+      editor.commands.setContent(value || "", { emitUpdate: false });
   }, [editor, value]);
 
   return (
-    <div className={cn("overflow-hidden rounded-xl border border-border-strong bg-surface focus-within:border-primary focus-within:ring-4 focus-within:ring-ring/20", invalid && "border-danger")}>
-      {editor ? <Toolbar editor={editor} /> : <div className="h-11 border-b border-border bg-surface-2/50" />}
+    <div
+      className={cn(
+        "border-border-strong bg-surface focus-within:border-primary focus-within:ring-ring/20 overflow-hidden rounded-xl border focus-within:ring-4",
+        invalid && "border-danger",
+      )}
+    >
+      {editor ? <Toolbar editor={editor} /> : <div className="border-border bg-surface-2/50 h-11 border-b" />}
       <EditorContent editor={editor} />
     </div>
   );

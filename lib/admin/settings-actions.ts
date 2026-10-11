@@ -10,7 +10,9 @@ import { SETTINGS_FIELDS } from "./settings-fields";
 
 function contrast(hex: string, against = "#ffffff") {
   const lum = (h: string) => {
-    const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+    const [r, g, b] = [1, 3, 5]
+      .map((i) => parseInt(h.slice(i, i + 2), 16) / 255)
+      .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
   const [a, b] = [lum(hex), lum(against)].sort((x, y) => y - x);
@@ -30,10 +32,17 @@ export async function saveSettings(values: FormValues) {
     for (const key of ["primaryColor", "accentColor"] as const) {
       const c = data[key];
       if (typeof c === "string" && contrast(c) < 4.5) {
-        return { ok: false as const, message: "That colour is too light for readable white text (WCAG AA needs 4.5:1).", fieldErrors: { [key]: `Contrast with white is ${contrast(c).toFixed(1)}:1 — choose a darker shade.` } };
+        return {
+          ok: false as const,
+          message: "That colour is too light for readable white text (WCAG AA needs 4.5:1).",
+          fieldErrors: {
+            [key]: `Contrast with white is ${contrast(c).toFixed(1)}:1 — choose a darker shade.`,
+          },
+        };
       }
     }
-    if (typeof data.whatsappNumber === "string") data.whatsappNumber = data.whatsappNumber.replace(/[^\d]/g, "");
+    if (typeof data.whatsappNumber === "string")
+      data.whatsappNumber = data.whatsappNumber.replace(/[^\d]/g, "");
     const before = await prisma.siteSettings.findUnique({ where: { id: "site" } });
     if (before) await snapshot(user, "siteSettings", "site", before);
     await prisma.siteSettings.update({ where: { id: "site" }, data });

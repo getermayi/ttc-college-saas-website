@@ -16,28 +16,59 @@ export function LeadsTrendChart({ data }: { data: { date: string; label: string;
               </linearGradient>
             </defs>
             <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="0" />
-            <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 11 }} interval="preserveStartEnd" minTickGap={24} />
-            <YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 11 }} width={40} />
+            <XAxis
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+              interval="preserveStartEnd"
+              minTickGap={24}
+            />
+            <YAxis
+              allowDecimals={false}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+              width={40}
+            />
             <Tooltip
               cursor={{ stroke: "var(--border-strong)", strokeWidth: 1 }}
-              contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, fontSize: 12, color: "var(--foreground)" }}
+              contentStyle={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                fontSize: 12,
+                color: "var(--foreground)",
+              }}
               labelStyle={{ color: "var(--muted-foreground)" }}
               formatter={(v) => [String(v), "Leads"]}
             />
-            <Area type="monotone" dataKey="leads" stroke="var(--primary)" strokeWidth={2} fill="url(#leadsFill)" activeDot={{ r: 5, stroke: "var(--surface)", strokeWidth: 2 }} dot={false} />
+            <Area
+              type="monotone"
+              dataKey="leads"
+              stroke="var(--primary)"
+              strokeWidth={2}
+              fill="url(#leadsFill)"
+              activeDot={{ r: 5, stroke: "var(--surface)", strokeWidth: 2 }}
+              dot={false}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
       <figcaption className="sr-only">
         Daily leads over the last {data.length} days, {total} in total.
       </figcaption>
-      <details className="mt-2 text-xs text-muted-foreground">
+      <details className="text-muted-foreground mt-2 text-xs">
         <summary className="cursor-pointer">Show as table</summary>
         <table className="mt-2 w-full">
           <thead>
             <tr>
-              <th scope="col" className="text-left font-semibold">Date</th>
-              <th scope="col" className="text-right font-semibold">Leads</th>
+              <th scope="col" className="text-left font-semibold">
+                Date
+              </th>
+              <th scope="col" className="text-right font-semibold">
+                Leads
+              </th>
             </tr>
           </thead>
           <tbody>

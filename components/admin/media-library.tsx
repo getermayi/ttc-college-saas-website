@@ -49,19 +49,29 @@ export function MediaLibrary({ items }: { items: Item[] }) {
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {items.map((m) => (
             <li key={m.id}>
-              <button type="button" onClick={() => open(m)} className="group w-full overflow-hidden rounded-2xl border border-border bg-surface text-left hover:border-primary focus-visible:border-primary">
+              <button
+                type="button"
+                onClick={() => open(m)}
+                className="group border-border bg-surface hover:border-primary focus-visible:border-primary w-full overflow-hidden rounded-2xl border text-left"
+              >
                 {m.kind === "IMAGE" ? (
-                  <span className="relative block aspect-square bg-surface-2">
-                    <Image src={m.url} alt={m.alt} fill sizes="240px" className="object-cover transition-transform group-hover:scale-[1.03]" />
+                  <span className="bg-surface-2 relative block aspect-square">
+                    <Image
+                      src={m.url}
+                      alt={m.alt}
+                      fill
+                      sizes="240px"
+                      className="object-cover transition-transform group-hover:scale-[1.03]"
+                    />
                   </span>
                 ) : (
-                  <span className="grid aspect-square place-items-center bg-danger-soft text-danger-soft-foreground">
+                  <span className="bg-danger-soft text-danger-soft-foreground grid aspect-square place-items-center">
                     <FileText className="size-10" aria-hidden />
                   </span>
                 )}
                 <span className="block p-3">
                   <span className="block truncate text-sm font-medium">{m.alt || m.filename}</span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     {size(m.bytes)} · {formatDate(m.createdAt)}
                   </span>
                 </span>
@@ -70,7 +80,9 @@ export function MediaLibrary({ items }: { items: Item[] }) {
           ))}
         </ul>
       ) : (
-        <p className="rounded-2xl border border-dashed border-border-strong p-12 text-center text-muted-foreground">No files yet. Upload photos of the campus, classrooms and events — real photos build trust.</p>
+        <p className="border-border-strong text-muted-foreground rounded-2xl border border-dashed p-12 text-center">
+          No files yet. Upload photos of the campus, classrooms and events — real photos build trust.
+        </p>
       )}
 
       <Dialog open={uploadKind !== null} onOpenChange={(o) => !o && setUploadKind(null)}>
@@ -98,32 +110,48 @@ export function MediaLibrary({ items }: { items: Item[] }) {
           {editing ? (
             <div className="grid gap-5 sm:grid-cols-2">
               {editing.kind === "IMAGE" ? (
-                <div className="relative aspect-square overflow-hidden rounded-xl bg-surface-2">
+                <div className="bg-surface-2 relative aspect-square overflow-hidden rounded-xl">
                   <Image src={editing.url} alt={editing.alt} fill sizes="320px" className="object-contain" />
                 </div>
               ) : (
-                <a href={editing.url} target="_blank" rel="noopener noreferrer" className="grid aspect-square place-items-center rounded-xl bg-danger-soft text-danger-soft-foreground">
+                <a
+                  href={editing.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-danger-soft text-danger-soft-foreground grid aspect-square place-items-center rounded-xl"
+                >
                   <FileText className="size-12" aria-hidden />
                   <span className="text-sm font-semibold underline">Open PDF</span>
                 </a>
               )}
               <div className="space-y-4">
-                <p className="break-all text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs break-all">
                   {editing.filename} · {size(editing.bytes)}
                   {editing.width ? ` · ${editing.width}×${editing.height}` : ""}
                 </p>
-                <Field id="m-alt" label={editing.kind === "IMAGE" ? "Alt text" : "Title"} required={editing.kind === "IMAGE"}>
+                <Field
+                  id="m-alt"
+                  label={editing.kind === "IMAGE" ? "Alt text" : "Title"}
+                  required={editing.kind === "IMAGE"}
+                >
                   <Input id="m-alt" value={alt} onChange={(e) => setAlt(e.target.value)} maxLength={250} />
                 </Field>
                 <Field id="m-caption" label="Caption" optional>
-                  <Input id="m-caption" value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={300} />
+                  <Input
+                    id="m-caption"
+                    value={caption}
+                    onChange={(e) => setCaption(e.target.value)}
+                    maxLength={300}
+                  />
                 </Field>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    void navigator.clipboard.writeText(new URL(editing.url, window.location.origin).toString());
+                    void navigator.clipboard.writeText(
+                      new URL(editing.url, window.location.origin).toString(),
+                    );
                     toast.success("Link copied.");
                   }}
                 >

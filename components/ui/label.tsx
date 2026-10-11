@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 
 export function Label({ className, ...props }: React.ComponentProps<"label">) {
   return (
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
-    <label data-slot="label" className={cn("text-sm font-semibold text-foreground", className)} {...props} />
+    <label data-slot="label" className={cn("text-foreground text-sm font-semibold", className)} {...props} />
   );
 }
