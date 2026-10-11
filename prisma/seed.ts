@@ -168,7 +168,7 @@ const SECTIONS: SectionSeed[] = [
     eyebrow: "Teacher Training College, Aalo",
     title: "Become the teacher your community remembers.",
     subtitle:
-      "A 2-year B.Ed. in the green hills of West Siang — affiliated to Rajiv Gandhi University and recognised by NCTE. Small classes, real classroom practice, and people who know your name.",
+      "A 2-year B.Ed. in the green hills of West Siang — affiliated to Rajiv Gandhi University and recognised by NCTE. Learn by teaching, with guidance from people who know your name.",
     ctaLabel: "Check eligibility & enquire",
     ctaHref: "/enquire",
     secondaryCtaLabel: "Explore the B.Ed.",

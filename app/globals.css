@@ -1,26 +1,449 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────────────
+   Design tokens — TTC Aalo
+   Forest green (trust), warm sand (warmth), terracotta (action),
+   soft sky (information). All text pairs meet WCAG AA.
+   ───────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbf7f0;
+  --foreground: #17211c;
+  --surface: #ffffff;
+  --surface-2: #f4ecdf;
+  --surface-3: #ebe0cd;
+  --muted-foreground: #55615a;
+  --border: #e4d8c4;
+  --border-strong: #cbbba0;
+
+  --primary: #1f4d3a;
+  --primary-hover: #183e2e;
+  --primary-foreground: #fbf7f0;
+  --primary-soft: #e2ede5;
+  --primary-soft-foreground: #1a4132;
+
+  --accent: #b14f26;
+  --accent-hover: #963f1c;
+  --accent-foreground: #ffffff;
+  --accent-soft: #f8e4d8;
+  --accent-soft-foreground: #7a3415;
+
+  --info: #245f99;
+  --info-soft: #e1edf8;
+  --info-soft-foreground: #1d4f80;
+  --success: #2c7a4b;
+  --success-soft: #e0f1e6;
+  --success-soft-foreground: #1f5c37;
+  --warning: #9a6200;
+  --warning-soft: #fbefd5;
+  --warning-soft-foreground: #6e4600;
+  --danger: #b42318;
+  --danger-soft: #fde8e6;
+  --danger-soft-foreground: #8f1c13;
+
+  --ring: #2f7a5b;
+  --shadow-color: 34 30 20;
+
+  --radius: 1rem;
+}
+
+.dark {
+  --background: #0e1613;
+  --foreground: #edf2ee;
+  --surface: #141f1a;
+  --surface-2: #1a2721;
+  --surface-3: #22322b;
+  --muted-foreground: #a4b3aa;
+  --border: #2a3a33;
+  --border-strong: #3a4e45;
+
+  --primary: #8fd1ae;
+  --primary-hover: #a9dec1;
+  --primary-foreground: #0b1511;
+  --primary-soft: #1d3329;
+  --primary-soft-foreground: #b6e4cb;
+
+  --accent: #ee9468;
+  --accent-hover: #f4ab86;
+  --accent-foreground: #1d0d05;
+  --accent-soft: #3a2218;
+  --accent-soft-foreground: #f6c2a6;
+
+  --info: #8cc0ef;
+  --info-soft: #172b3d;
+  --info-soft-foreground: #b7d8f6;
+  --success: #86d3a4;
+  --success-soft: #16301f;
+  --success-soft-foreground: #a9e3c0;
+  --warning: #f1c46b;
+  --warning-soft: #332710;
+  --warning-soft-foreground: #f5d699;
+  --danger: #f59a91;
+  --danger-soft: #3a1714;
+  --danger-soft-foreground: #f8beb8;
+
+  --ring: #8fd1ae;
+  --shadow-color: 0 0 0;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-foreground: var(--primary-soft-foreground);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-foreground: var(--accent-soft-foreground);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-info-soft-foreground: var(--info-soft-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-success-soft-foreground: var(--success-soft-foreground);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-soft-foreground: var(--warning-soft-foreground);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-soft-foreground: var(--danger-soft-foreground);
+  --color-ring: var(--ring);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.25);
+  --radius-2xl: calc(var(--radius) * 1.5);
+  --radius-3xl: calc(var(--radius) * 2);
+
+  /* Soft, layered shadows */
+  --shadow-soft: 0 1px 2px rgb(var(--shadow-color) / 0.05), 0 2px 6px rgb(var(--shadow-color) / 0.04);
+  --shadow-lift: 0 1px 2px rgb(var(--shadow-color) / 0.06), 0 8px 24px -6px rgb(var(--shadow-color) / 0.12),
+    0 24px 48px -16px rgb(var(--shadow-color) / 0.1);
+  --shadow-float: 0 2px 4px rgb(var(--shadow-color) / 0.08), 0 16px 40px -8px rgb(var(--shadow-color) / 0.22);
+
+  /* Fluid type scale */
+  --text-display: clamp(2.6rem, 1.55rem + 4.6vw, 5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.025em;
+  --text-h1: clamp(2.15rem, 1.55rem + 2.7vw, 3.6rem);
+  --text-h1--line-height: 1.06;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h2: clamp(1.75rem, 1.35rem + 1.75vw, 2.75rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h3: clamp(1.2rem, 1.08rem + 0.5vw, 1.45rem);
+  --text-h3--line-height: 1.3;
+  --text-lead: clamp(1.05rem, 0.98rem + 0.35vw, 1.25rem);
+  --text-lead--line-height: 1.6;
+
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
-body {
-  background: var(--background);
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--accent-soft-foreground);
+  }
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" 50;
+  }
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Textile motif — abstract lozenges and zig-zags, inspired by
+   woven bands from Arunachal. Used quietly as texture.
+   ───────────────────────────────────────────────────────────── */
+@utility motif-texture {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%231f4d3a' stroke-opacity='0.07' stroke-width='1.25'%3E%3Cpath d='M24 4 44 24 24 44 4 24Z'/%3E%3Cpath d='M24 14 34 24 24 34 14 24Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 48px 48px;
+}
+@utility motif-texture-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23fbf7f0' stroke-opacity='0.08' stroke-width='1.25'%3E%3Cpath d='M24 4 44 24 24 44 4 24Z'/%3E%3Cpath d='M24 14 34 24 24 34 14 24Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 48px 48px;
+}
+.dark .motif-texture {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%238fd1ae' stroke-opacity='0.06' stroke-width='1.25'%3E%3Cpath d='M24 4 44 24 24 44 4 24Z'/%3E%3Cpath d='M24 14 34 24 24 34 14 24Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility section-y {
+  padding-block: 4rem;
+  @media (width >= 48rem) {
+    padding-block: 6rem;
+  }
+}
+
+@utility text-balance-pretty {
+  text-wrap: balance;
+}
+
+/* Scroll reveal with zero JavaScript where supported (Chrome/Edge/Android).
+   Elements stay fully visible in browsers without scroll-driven animations. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Rich text (admin-authored HTML)
+   ───────────────────────────────────────────────────────────── */
+.prose-ttc {
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  max-width: 68ch;
+}
+.prose-ttc > * + * {
+  margin-top: 1.1em;
+}
+.prose-ttc h2 {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  margin-top: 2em;
+  line-height: 1.3;
+}
+.prose-ttc h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 1.6em;
+}
+.prose-ttc a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.prose-ttc a:hover {
+  text-decoration-thickness: 2px;
+}
+.prose-ttc ul,
+.prose-ttc ol {
+  padding-left: 1.4em;
+}
+.prose-ttc ul {
+  list-style: disc;
+}
+.prose-ttc ol {
+  list-style: decimal;
+}
+.prose-ttc li + li {
+  margin-top: 0.4em;
+}
+.prose-ttc li::marker {
+  color: var(--accent);
+}
+.prose-ttc blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1em;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--foreground);
+}
+.prose-ttc strong {
+  font-weight: 650;
+}
+.prose-ttc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prose-ttc th,
+.prose-ttc td {
+  border: 1px solid var(--border);
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+.prose-ttc hr {
+  border-color: var(--border);
+  margin-block: 2em;
+}
+
+/* Tiptap editor */
+.tiptap {
+  min-height: 12rem;
+  outline: none;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--muted-foreground);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Print: clean document checklist */
+@media print {
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .print-only {
+    display: block !important;
+  }
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+}
+.print-only {
+  display: none;
+}
+
+/* Radix animation keyframes */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheet-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes sheet-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes sheet-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
 }

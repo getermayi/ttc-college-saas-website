@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { redirect, forbidden } from "next/navigation";
+import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { can, type Capability } from "@/lib/auth/permissions";
@@ -35,10 +35,10 @@ export async function requireUser() {
   return user;
 }
 
-/** Use in pages: redirects to login, or shows the 403 page when the role lacks access. */
+/** Use in pages: redirects to login, or to the "no access" page when the role lacks access. */
 export async function requireCapability(capability: Capability) {
   const user = await requireUser();
-  if (!can(user.role, capability)) forbidden();
+  if (!can(user.role, capability)) redirect("/admin/no-access");
   return user;
 }
 
