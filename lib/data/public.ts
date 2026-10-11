@@ -325,6 +325,20 @@ export async function getEvents() {
 }
 export type EventItem = Awaited<ReturnType<typeof getEvents>>[number];
 
+/** Upcoming vs past, computed inside the cache scope (refreshes hourly). */
+export async function getEventsSplit() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(TAGS.events, TAGS.media);
+  const events = await getEvents();
+  const now = Date.now();
+  const isUpcoming = (e: EventItem) => (e.endsAt ?? e.startsAt).getTime() >= now;
+  return {
+    upcoming: events.filter(isUpcoming).sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime()),
+    past: events.filter((e) => !isUpcoming(e)),
+  };
+}
+
 export async function getEvent(slug: string) {
   "use cache";
   cacheLife("hours");
