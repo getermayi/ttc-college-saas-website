@@ -5,7 +5,6 @@ import { useEffect, useId, useState, useTransition } from "react";
 import { useForm, useWatch, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, CircleCheck, Loader2, Phone } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, NativeSelect, Textarea } from "@/components/ui/input";
 import { Field, describedBy } from "@/components/ui/field";
@@ -120,7 +119,6 @@ export function EnquiryForm({
           for (const [k, msg] of Object.entries(res.fieldErrors))
             setError(k as FieldPath<EnquiryInput>, { message: msg });
         }
-        toast.error(res.message);
       });
     },
     (errs) => {

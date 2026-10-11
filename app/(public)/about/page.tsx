@@ -83,7 +83,7 @@ export default async function AboutPage() {
                     <span className="bg-primary-soft text-primary-soft-foreground grid size-12 place-items-center rounded-2xl">
                       <Icon name={item.icon} className="size-6" />
                     </span>
-                    <span className="font-display text-border-strong text-3xl font-semibold">
+                    <span aria-hidden className="font-display text-muted-foreground text-3xl font-semibold">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>

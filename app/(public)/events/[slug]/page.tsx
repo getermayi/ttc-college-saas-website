@@ -13,7 +13,9 @@ import { RichText } from "@/components/site/rich-text";
 import { JsonLd } from "@/components/site/json-ld";
 import { LightboxGallery } from "@/components/site/lightbox";
 
-// Await params at the top so unknown slugs return a real 404 status.
+// Unknown slugs wait for a full static render, so they return a real 404 status
+// (and newly published content is generated on first visit, then cached).
+export const ensureStatic = "navigation";
 export const instant = false;
 
 export async function generateStaticParams() {

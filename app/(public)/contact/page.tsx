@@ -4,7 +4,7 @@ import { getActiveProgrammes, getSettings } from "@/lib/data/public";
 import { buildMetadata } from "@/lib/seo";
 import { telLink, whatsappLink } from "@/lib/utils";
 import { PageHeader } from "@/components/site/page-header";
-import { EnquiryForm } from "@/components/site/enquiry-form";
+import { LazyEnquiryForm } from "@/components/site/lazy-enquiry-form";
 import { MapEmbed } from "@/components/site/map-embed";
 import { Button } from "@/components/ui/button";
 
@@ -120,7 +120,7 @@ export default async function ContactPage() {
               Send us an enquiry
             </h2>
             <p className="text-muted-foreground mt-1">We usually call back within one working day.</p>
-            <EnquiryForm
+            <LazyEnquiryForm
               className="mt-6"
               programmes={programmes.map((p) => ({ id: p.id, name: p.name, shortName: p.shortName }))}
               formName="contact"

@@ -10,7 +10,8 @@ import { CATEGORIES, CATEGORY_LABELS, QUALIFICATIONS, type CategoryValue } from 
 import { checkEligibility, type EligibilityResult } from "@/lib/eligibility";
 import type { EligibilityConfig } from "@/lib/data/public";
 import { cn } from "@/lib/utils";
-import { EnquiryForm, type EnquiryPrefill } from "./enquiry-form";
+import type { EnquiryPrefill } from "./enquiry-form";
+import { LazyEnquiryForm } from "./lazy-enquiry-form";
 
 const TONES: Record<EligibilityResult["status"], { box: string; icon: React.ReactNode }> = {
   eligible: {
@@ -224,7 +225,7 @@ export function EligibilityAndEnquiry({
             <div className="flex items-start gap-3">
               {TONES[result.status].icon}
               <div>
-                <h3 className="font-display text-2xl font-semibold">{result.title}</h3>
+                <h2 className="font-display text-2xl font-semibold">{result.title}</h2>
                 <p className="mt-2 leading-relaxed opacity-95">{result.message}</p>
               </div>
             </div>
@@ -258,11 +259,11 @@ export function EligibilityAndEnquiry({
           id={`${uid}-enquiry`}
           className="border-border bg-surface scroll-mt-28 rounded-3xl border p-5 shadow-[var(--shadow-soft)] sm:p-8"
         >
-          <h3 className="font-display text-2xl font-semibold">{formTitle}</h3>
+          <h2 className="font-display text-2xl font-semibold">{formTitle}</h2>
           <p className="text-muted-foreground mt-1.5">
             Share a few details. Our admissions team will call you back.
           </p>
-          <EnquiryForm
+          <LazyEnquiryForm
             className="mt-6"
             programmes={config.map((p) => ({ id: p.id, name: p.name, shortName: p.shortName }))}
             prefill={prefill}

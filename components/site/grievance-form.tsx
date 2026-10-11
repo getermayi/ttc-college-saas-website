@@ -4,7 +4,6 @@ import { useId, useState, useTransition } from "react";
 import { useForm, useWatch, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleCheck, Loader2, ShieldCheck } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, NativeSelect, Textarea } from "@/components/ui/input";
 import { Field, describedBy } from "@/components/ui/field";
@@ -68,7 +67,6 @@ export function GrievanceForm() {
         setResetKey((k) => k + 1);
         setToken("");
         setFormError(res.message);
-        toast.error(res.message);
         if (res.fieldErrors)
           for (const [k, m] of Object.entries(res.fieldErrors))
             setError(k as FieldPath<GrievanceInput>, { message: m });

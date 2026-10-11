@@ -1,18 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { Toaster } from "@/components/ui/toaster";
 import { getSettings } from "@/lib/data/public";
 import { absoluteUrl } from "@/lib/utils";
 import { BrandColors } from "@/components/site/brand-colors";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+// "optional": on slow connections the fallback serif stays (no late re-layout of the
+// headline, which would delay Largest Contentful Paint); the web font is used once cached.
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
-  display: "swap",
-  axes: ["SOFT", "opsz"],
+  display: "optional",
+  axes: ["opsz"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -49,8 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-dvh">
         {children}
-        <Toaster />
-        <Analytics />
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );

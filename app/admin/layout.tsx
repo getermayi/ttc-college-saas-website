@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AdminSkeleton } from "@/components/admin/skeleton";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: { default: "Admin", template: "%s · TTC Aalo Admin" },
@@ -15,6 +16,7 @@ export default function AdminRootLayout({ children }: LayoutProps<"/admin">) {
   return (
     <TooltipProvider>
       <Suspense fallback={<AdminSkeleton />}>{children}</Suspense>
+      <Toaster />
     </TooltipProvider>
   );
 }

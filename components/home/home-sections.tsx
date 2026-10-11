@@ -82,16 +82,11 @@ export function Hero({
             ) : null}
           </div>
 
-          <h1
-            id="hero-title"
-            className="animate-fade-up text-display text-balance-pretty mt-6 font-semibold [animation-delay:80ms]"
-          >
+          <h1 id="hero-title" className="text-display text-balance-pretty mt-6 font-semibold">
             {section.title ?? settings.siteName}
           </h1>
           {section.subtitle ? (
-            <p className="animate-fade-up text-lead text-muted-foreground mt-6 max-w-xl [animation-delay:160ms]">
-              {section.subtitle}
-            </p>
+            <p className="text-lead text-muted-foreground mt-6 max-w-xl">{section.subtitle}</p>
           ) : null}
 
           <div className="animate-fade-up mt-9 flex flex-col gap-3 [animation-delay:240ms] sm:flex-row sm:items-center">
@@ -208,9 +203,9 @@ export function Stats({ section }: { section: SectionData }) {
   if (!section.items.length) return null;
   return (
     <section aria-label="TTC Aalo in numbers" className="container-page section-y pb-0 md:pb-0">
-      <dl className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {section.items.map((item, i) => (
-          <div
+          <li
             key={i}
             className={cn(
               "reveal border-border relative overflow-hidden rounded-3xl border p-6 md:p-7",
@@ -218,10 +213,10 @@ export function Stats({ section }: { section: SectionData }) {
             )}
           >
             {i === 0 ? <div className="motif-texture-light absolute inset-0" aria-hidden /> : null}
-            <dd className="font-display relative text-[clamp(2.4rem,1.8rem+2.4vw,3.6rem)] leading-none font-semibold tracking-tight">
+            <p className="font-display relative text-[clamp(2.4rem,1.8rem+2.4vw,3.6rem)] leading-none font-semibold tracking-tight">
               <CountUp value={item.value ?? ""} suffix={item.suffix} />
-            </dd>
-            <dt className="relative mt-3 font-semibold">{item.title}</dt>
+            </p>
+            <p className="relative mt-3 font-semibold">{item.title}</p>
             {item.description ? (
               <p
                 className={cn(
@@ -232,9 +227,9 @@ export function Stats({ section }: { section: SectionData }) {
                 {item.description}
               </p>
             ) : null}
-          </div>
+          </li>
         ))}
-      </dl>
+      </ul>
     </section>
   );
 }
@@ -346,7 +341,7 @@ export function ProgrammesSection({
             <GraduationCap className="size-8" aria-hidden />
             <div className="mt-8">
               <p className="font-display text-2xl leading-tight font-semibold">Am I eligible?</p>
-              <p className="text-accent-foreground/85 mt-2">
+              <p className="text-accent-foreground mt-2">
                 Answer three quick questions and find out in under a minute.
               </p>
               <span className="mt-5 inline-flex items-center gap-1.5 font-semibold">

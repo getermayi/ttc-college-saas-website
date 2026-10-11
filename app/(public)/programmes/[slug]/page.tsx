@@ -24,10 +24,12 @@ import { Breadcrumbs } from "@/components/site/page-header";
 import { RichText } from "@/components/site/rich-text";
 import { Photo } from "@/components/site/photo";
 import { Eyebrow } from "@/components/site/motif";
-import { EnquiryForm } from "@/components/site/enquiry-form";
+import { LazyEnquiryForm } from "@/components/site/lazy-enquiry-form";
 import { Button } from "@/components/ui/button";
 
-// Await params at the top so unknown slugs return a real 404 status.
+// Unknown slugs wait for a full static render, so they return a real 404 status
+// (and newly published content is generated on first visit, then cached).
+export const ensureStatic = "navigation";
 export const instant = false;
 
 export async function generateStaticParams() {
@@ -346,7 +348,7 @@ export default async function ProgrammePage({ params }: PageProps<"/programmes/[
               Questions about the {p.shortName}?
             </h2>
             <p className="text-muted-foreground mt-2">Leave your details and we&apos;ll call you back.</p>
-            <EnquiryForm
+            <LazyEnquiryForm
               className="mt-8"
               programmes={[{ id: p.id, name: p.name, shortName: p.shortName }]}
               defaultProgrammeId={p.id}
