@@ -1,0 +1,6 @@
+lib/generated
+.next
+node_modules
+prisma/migrations
+playwright-report
+test-results
