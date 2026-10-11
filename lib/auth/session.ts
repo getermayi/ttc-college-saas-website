@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { can, type Capability } from "@/lib/auth/permissions";
@@ -18,6 +19,8 @@ export type CurrentUser = {
  * on every request, so deactivated users and role changes take effect immediately.
  */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
+  // Mark the render as request-time before Auth.js touches crypto/cookies.
+  await connection();
   const session = await auth();
   const id = session?.user?.id;
   if (!id) return null;
